@@ -48,6 +48,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' request.user.profile.id %}">My Account</a>
                 </li>
+                <li>
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-1" type="search" placeholder="Search user" aria-label="Search">
+                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </li>
             </ul>
         </div>
     </nav>
