@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>{{ profile.user.username }}</h2>
+<h2>@{{ profile.user.username }}</h2>
 
 <form method="post">
     {% csrf_token %}
@@ -38,6 +38,17 @@
                 <p class="card-text">@{{ followed_by.user.username|lower }}</p>
             </div>
         </div>
+    {% endfor %}
+</div>
+
+<div class="card-columns">
+    {% for review in profile.user.reviews.all %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ review.restaurant.name }}</h5>
+            <p class="card-text">{{ review.photo }}</p>
+        </div>
+    </div>
     {% endfor %}
 </div>
 
