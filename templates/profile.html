@@ -4,15 +4,18 @@
 
 <h2>{{profile.user.username}}</h2>
 
-<div class="btn-group" role="group" aria-label="Basic example">
-    {%if profile in user.profile.follows.all%}
-        <button type="button" class="btn btn-secondary">Follow</button>
-        <button type="button" class="btn btn-outline-secondary">Unfollow</button>
-    {%else%}
-        <button type="button" class="btn btn-outline-secondary">Follow</button>
-        <button type="button" class="btn btn-secondary">Unfollow</button>
-    {%endif%}
-</div>
+<form method="post">
+    {% csrf_token %}
+    <div class="btn-group" role="group" aria-label="Basic example">
+        {%if profile in user.profile.follows.all%}
+            <button type="button" class="btn btn-secondary">Follow</button>
+            <button type="button" name="follow" class="btn btn-outline-secondary">Unfollow</button>
+        {%else%}
+            <button type="button" name="follow" class="btn btn-outline-secondary">Follow</button>
+            <button type="button" class="btn btn-secondary">Unfollow</button>
+        {%endif%}
+    </div>
+</form>
 
 <div class="container">
     <h3>Follows: </h3>
