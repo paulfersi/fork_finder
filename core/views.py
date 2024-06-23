@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from .models import Profile
 
 @login_required
 def feed_view(request):
@@ -14,3 +15,7 @@ def account_view(request):
 def add_review_view(request):
     # logic to handle review submission
     return render(request, 'add_review.html')
+
+def profile_list_view(request):
+    profiles = Profile.objects.exclude(user=request.user)
+    return render(request, "profile_list.html", {"profiles": profiles})
