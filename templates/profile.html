@@ -2,24 +2,23 @@
 
 {% block content %}
 
-<h2>{{profile.user.username}}</h2>
+<h2>{{ profile.user.username }}</h2>
 
 <form method="post">
     {% csrf_token %}
     <div class="btn-group" role="group" aria-label="Basic example">
-        {%if profile in user.profile.follows.all%}
-            <button type="button" class="btn btn-secondary">Follow</button>
-            <button type="button" name="follow" class="btn btn-outline-secondary">Unfollow</button>
-        {%else%}
-            <button type="button" name="follow" class="btn btn-outline-secondary">Follow</button>
-            <button type="button" class="btn btn-secondary">Unfollow</button>
-        {%endif%}
+        {% if profile in user.profile.follows.all %}
+            <button type="button" class="btn btn-outline-secondary" disabled>Follow</button>
+            <button type="submit" class="btn btn-secondary" name="follow" value="unfollow">Unfollow</button>
+        {% else %}
+            <button type="submit" class="btn btn-outline-secondary" name="follow" value="follow">Follow</button>
+            <button type="button" class="btn btn-secondary" disabled>Unfollow</button>
+        {% endif %}
     </div>
 </form>
 
 <div class="container">
-    <h3>Follows: </h3>
-
+    <h3>Follows:</h3>
     {% for following in profile.follows.all %}
         <div class="card w-50">
             <div class="card-body">
@@ -30,19 +29,16 @@
     {% endfor %}
 </div>
 
-
 <div class="container">
     <h3>Is followed by:</h3>
-
     {% for followed_by in profile.followed_by.all %}
         <div class="card w-50">
             <div class="card-body">
-                <h5 class="card-title">{{ followed_by.user.username}}</h5>
+                <h5 class="card-title">{{ followed_by.user.username }}</h5>
                 <p class="card-text">@{{ followed_by.user.username|lower }}</p>
             </div>
         </div>
     {% endfor %}
 </div>
-
 
 {% endblock %}
