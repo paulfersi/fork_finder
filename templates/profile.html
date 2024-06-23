@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{profile.user.username}} Follows</h2>
+<h3>{{profile.user.username}} Follows</h2>
 
-<div class="card-columns">
-    {% for following in profile.follows.all %}
-    <div class="card mb-4">
-        <img src="default.jpg" class="card-img-top" alt="default photo">
+
+{% for following in profile.follows.all %}
+    <div class="card w-50">
         <div class="card-body">
             <h5 class="card-title">{{ following.user.username }}</h5>
             <p class="card-text">@{{ following.user.username|lower }}</p>
         </div>
     </div>
-    {% endfor %}
-</div>
+{% endfor %}
+
+
+<h3>{{profile.user.username}} Followed by</h2>
+
+{% for followed_by in profile.followed_by.all %}
+    <div class="card w-50">
+        <div class="card-body">
+            <h5 class="card-title">{{ followed_by.user.username }}</h5>
+            <p class="card-text">@{{ followed_by.user.username|lower }}</p>
+        </div>
+    </div>
+{% endfor %}
 
 
 {% endblock %}
