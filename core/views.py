@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Profile
+from .models import Profile,Review,Restaurant
+from .forms import ReviewForm
 
 @login_required
 def feed_view(request):
@@ -13,8 +14,15 @@ def account_view(request):
 
 @login_required
 def add_review_view(request):
-    # logic to handle review submission
-    return render(request, 'add_review.html')
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, request.FILES)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+    else:
+        form = ReviewForm()
+    return render(request, 'add_review.html', {'form': form})
 
 def profile_list_view(request):
     profiles = Profile.objects.exclude(user=request.user)
