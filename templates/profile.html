@@ -8,11 +8,10 @@
     {% csrf_token %}
     <div class="btn-group" role="group" aria-label="Basic example">
         {% if profile in user.profile.follows.all %}
-            <button type="button" class="btn btn-outline-secondary" disabled>Follow</button>
+            <button type="button" class="btn btn-secondary" disabled>Following</button>
             <button type="submit" class="btn btn-secondary" name="follow" value="unfollow">Unfollow</button>
         {% else %}
-            <button type="submit" class="btn btn-outline-secondary" name="follow" value="follow">Follow</button>
-            <button type="button" class="btn btn-secondary" disabled>Unfollow</button>
+            <button type="submit" class="btn btn-secondary" name="follow" value="follow">Follow</button>
         {% endif %}
     </div>
 </form>
