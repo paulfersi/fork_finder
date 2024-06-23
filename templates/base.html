@@ -46,7 +46,7 @@
                     <a class="nav-link" href="{%url 'profile_list'%}">All profiles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">My Account</a>
+                    <a class="nav-link" href="{% url 'profile' request.user.profile.id %}">My Account</a>
                 </li>
             </ul>
         </div>
