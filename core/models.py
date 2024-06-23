@@ -26,13 +26,27 @@ class Profile(models.Model):
 class Restaurant(models.Model): 
     name = models.CharField(max_length=60)  #modify with API
     location = models.CharField(max_length=60)
+
+    def __str__(self):
+        return (
+            f"{self.name} "
+            f"{self.location}"
+        )
     
 class Review(models.Model):
     user= models.ForeignKey(
         User, related_name="reviews", on_delete=models.CASCADE)
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE)
+    body = models.CharField(max_length=140)
     rating = models.PositiveSmallIntegerField()
     photo = models.ImageField(upload_to='review_photos/')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return (
+            f"{self.user} "
+            f"{self.restaurant.name} "
+            f"({self.created_at:%Y-%m-%d %H:%M}): "
+        )
     
