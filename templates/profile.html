@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{profile.user.username}} Follows</h2>
+<h3>{{profile.user.username}} follows: </h2>
 
 
 {% for following in profile.follows.all %}
@@ -14,7 +14,7 @@
 {% endfor %}
 
 
-<h3>{{profile.user.username}} Followed by</h2>
+<h3>{{profile.user.username}} is followed by:</h2>
 
 {% for followed_by in profile.followed_by.all %}
     <div class="card w-50">
