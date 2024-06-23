@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
-from .models import Profile,Review,Restaurant
+from .models import Profile
 from .forms import ReviewForm
+from django.contrib.auth.models import User
 
 @login_required
 def feed_view(request):
@@ -28,8 +29,8 @@ def profile_list_view(request):
     profiles = Profile.objects.exclude(user=request.user)
     return render(request, "profile_list.html", {"profiles": profiles})
 
-def profile_view(request,pk):
-    profile = Profile.objects.get(pk=pk)
+def profile_view(request,username):
+    profile = Profile.objects.get(username=username)
     if request.method == "POST":
         current_user_profile = request.user.profile
         data = request.POST
@@ -40,3 +41,13 @@ def profile_view(request,pk):
             current_user_profile.follows.remove(profile)
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
+
+def search_user_view(request):
+    query = request.GET.get('q')
+    if query:
+        try:
+            user = User.objects.get(username=query)
+            return redirect('profile', username=user.username)
+        except User.DoesNotExist:
+            return render(request, 'user_not_found.html', {'query': query})
+    return redirect('feed')

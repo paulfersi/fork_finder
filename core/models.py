@@ -40,7 +40,7 @@ class Review(models.Model):
         Restaurant, on_delete=models.CASCADE)
     body = models.CharField(max_length=140)
     rating = models.PositiveSmallIntegerField()
-    photo = models.ImageField(upload_to='review_photos/')
+    photo = models.ImageField(upload_to='media/review_photos/')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

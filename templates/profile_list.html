@@ -6,7 +6,7 @@
 <div class="card-columns">
     {% for profile in profiles %}
     <div class="card mb-4">
-        <a href="{% url 'profile' profile.id %}">
+        <a href="{% url 'profile' profile.user.username %}">
         <img src="../media/static/default.jpg" class="card-img-top" alt="default photo">
         <div class="card-body">
             <h5 class="card-title">{{ profile.user.username }}</h5>
