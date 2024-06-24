@@ -46,7 +46,7 @@
                     <a class="nav-link" href="{%url 'profile_list'%}">All profiles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profile' request.user.profile.id %}">My Account</a>
+                    <a class="nav-link" href="{% url 'profile' request.user.profile.pk %}">My Account</a>
                 </li>
                 <li>
                     <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'search_user' %}">

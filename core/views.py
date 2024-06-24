@@ -29,8 +29,8 @@ def profile_list_view(request):
     profiles = Profile.objects.exclude(user=request.user)
     return render(request, "profile_list.html", {"profiles": profiles})
 
-def profile_view(request,username):
-    profile = Profile.objects.get(username=username)
+def profile_view(request,pk):
+    profile = Profile.objects.get(pk=pk)
     if request.method == "POST":
         current_user_profile = request.user.profile
         data = request.POST
@@ -47,7 +47,7 @@ def search_user_view(request):
     if query:
         try:
             user = User.objects.get(username=query)
-            return redirect('profile', username=user.username)
+            return redirect('profile', pk=user.profile.pk)
         except User.DoesNotExist:
             return render(request, 'user_not_found.html', {'query': query})
     return redirect('feed')

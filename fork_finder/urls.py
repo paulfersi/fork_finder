@@ -24,6 +24,6 @@ urlpatterns = [
     path('account/', account_view, name='account'),
     path('add_review/', add_review_view, name='add_review'),
     path("profile_list/", profile_list_view, name="profile_list"),
-    path("profile/<str:username>", profile_view, name="profile"),
+    path("profile/<int:pk>/", profile_view, name="profile"),
     path('search/', search_user_view, name='search_user'),
 ]
