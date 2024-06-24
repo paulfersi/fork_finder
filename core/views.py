@@ -25,10 +25,6 @@ def add_review_view(request):
         form = ReviewForm()
     return render(request, 'add_review.html', {'form': form})
 
-def profile_list_view(request):
-    profiles = Profile.objects.exclude(user=request.user)
-    return render(request, "profile_list.html", {"profiles": profiles})
-
 def profile_view(request,pk):
     profile = Profile.objects.get(pk=pk)
     if request.method == "POST":
