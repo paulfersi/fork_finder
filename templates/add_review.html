@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Add Review for {{ restaurant.name }}</h1>
+    <h1>Add Review</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.place_search.label_tag }} {{ form.place_search }}
+        </div>
+        <div style="display:none;">
+            {{ form.place_id }}
+        </div>
+        <div>
+            {{ form.body.label_tag }} {{ form.body }}
+        </div>
+        <div>
+            {{ form.rating.label_tag }} {{ form.rating }}
+        </div>
+        <div>
+            {{ form.photo.label_tag }} {{ form.photo }}
+        </div>
         <button class="btn btn-secondary" type="submit">Submit Review</button>
     </form>
+    <script src="{% static 'js/google_maps_api.js' %}"></script>
+    <script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}
+
