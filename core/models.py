@@ -23,7 +23,8 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-class Restaurant(models.Model): 
+class Restaurant(models.Model):  
+    place_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=60)  #modify with API
     location = models.CharField(max_length=60)
 

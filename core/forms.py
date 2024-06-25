@@ -1,22 +1,20 @@
 from django import forms
-from .models import Review
+from .models import Review, Restaurant
 
 class ReviewForm(forms.ModelForm):
+    place_search = forms.CharField(label="Search for a place", max_length=255, required=True)
+    place_id = forms.CharField(widget=forms.HiddenInput(), required=True)
+    
     class Meta:
         model = Review
-        fields = ['restaurant', 'body', 'rating', 'photo']
-        widgets = {
-            'body': forms.Textarea(attrs={'rows': 3, 'maxlength': 140}),
-            'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-        }
-        labels = {
-            'body': 'Review Text',
-            'rating': 'Rating (1 to 5)',
-            'photo': 'Upload Photo',
-        }
+        fields = ['body', 'rating', 'photo']
 
-    def clean_rating(self):
-        rating = self.cleaned_data.get('rating')
-        if rating < 1 or rating > 5:
-            raise forms.ValidationError("Rating must be between 1 and 5.")
-        return rating
+    def save(self, commit=True):
+        place_id = self.cleaned_data.get('place_id')
+        # Fetch the place details using Google Maps API if the restaurant does not already exist
+        restaurant, created = Restaurant.objects.get_or_create(place_id=place_id, defaults={
+            'name': self.cleaned_data['place_search'],
+            'location': 'Location Placeholder'  # Update this with actual location if needed
+        })
+        self.instance.restaurant = restaurant
+        return super().save(commit)
