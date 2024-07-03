@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
 from django.contrib.auth.models import User
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
 
 @login_required
 def feed_view(request):
@@ -14,7 +16,6 @@ def account_view(request):
     return render(request, 'account.html')
 
 @login_required
-
 def add_review_view(request):
     if request.method == 'POST':
         form = ReviewForm(request.POST, request.FILES)
@@ -72,3 +73,10 @@ def search_user_view(request):
     return redirect('feed')
 
 
+
+
+class AddReviewView(CreateView):
+    model = Review 
+    template_name = "add_review.html"
+    fields = "__all__"
+    success_url = reverse_lazy("feed")
