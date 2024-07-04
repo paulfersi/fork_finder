@@ -4,6 +4,7 @@ from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
 from django.contrib.auth.models import User
 from django.views import View
+from django.conf import settings
 
 @login_required
 def feed_view(request):
@@ -78,7 +79,10 @@ def search_user_view(request):
 class AddReviewView(View):
     def get(self, request):
         form = ReviewForm()
-        return render(request, 'add_review.html', {'form': form})
+        return render(request, 'add_review.html', {
+            'form': form,
+            'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN
+        })
 
     def post(self, request):
         form = ReviewForm(request.POST, request.FILES)
@@ -88,12 +92,15 @@ class AddReviewView(View):
             place_id = request.POST.get('place_id')
             name = request.POST.get('name')
             location = request.POST.get('location')
-            
+
             restaurant, created = Restaurant.objects.get_or_create(
                 place_id=place_id,
                 defaults={'name': name, 'location': location}
             )
             review.restaurant = restaurant
             review.save()
-            return redirect('feed')  
-        return render(request, 'add_review.html', {'form': form})
+            return redirect('some_view_name')  # Redirect to a relevant page
+        return render(request, 'add_review.html', {
+            'form': form,
+            'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN
+        })
