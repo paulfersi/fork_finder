@@ -1,18 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load static %}
 
-
-    <h1>Add Review</h1>
-        <div>
-            <p>Search a restaurant</p>
+<h1>Add Review</h1>
+    <div>
+        <p>Search for a restaurant:</p>
         <mapbox-search-box
             access-token='{{ mapbox_access_token }}'
             proximity="0,0"
+            placeholder="Search for a restaurant..."
+            types="poi"
+            id="search-box"
+            name="search-box"
         >
         </mapbox-search-box>
-        </div>
+    </div>
 
-    <script src="search_box.js">
-    </script>
+    <button type="submit">Submit Review</button>
+    <script src={% static 'js/search_box.js' %}></script>
+
 {% endblock %}
