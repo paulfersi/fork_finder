@@ -1,4 +1,6 @@
+# Fork Finder
 
+A social network to share restaurants reviews with your friends. 
 
 
 ## Prerequisites
