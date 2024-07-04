@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
 from django.contrib.auth.models import User
-from django.views.generic import CreateView
-from django.urls import reverse_lazy
+from django.views import View
 
 @login_required
 def feed_view(request):
@@ -75,8 +74,26 @@ def search_user_view(request):
 
 
 
-class AddReviewView(CreateView):
-    model = Review 
-    template_name = "add_review.html"
-    fields = "__all__"
-    success_url = reverse_lazy("feed")
+
+class AddReviewView(View):
+    def get(self, request):
+        form = ReviewForm()
+        return render(request, 'add_review.html', {'form': form})
+
+    def post(self, request):
+        form = ReviewForm(request.POST, request.FILES)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            place_id = request.POST.get('place_id')
+            name = request.POST.get('name')
+            location = request.POST.get('location')
+            
+            restaurant, created = Restaurant.objects.get_or_create(
+                place_id=place_id,
+                defaults={'name': name, 'location': location}
+            )
+            review.restaurant = restaurant
+            review.save()
+            return redirect('feed')  
+        return render(request, 'add_review.html', {'form': form})
