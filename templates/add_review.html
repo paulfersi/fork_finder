@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css" />
+    <style>
+        #map {
+            display: none;
+        }
+    </style>
+
     <h1>Add Review</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div>
-            {{ form.place_search.label_tag }} {{ form.place_search }}
-        </div>
-        <div style="display:none;">
-            {{ form.place_id }}
-        </div>
-        <div>
-            {{ form.body.label_tag }} {{ form.body }}
-        </div>
-        <div>
-            {{ form.rating.label_tag }} {{ form.rating }}
-        </div>
-        <div>
-            {{ form.photo.label_tag }} {{ form.photo }}
-        </div>
-        <button class="btn btn-secondary" type="submit">Submit Review</button>
+        {{ form.as_p }}
+        <input type="text" id="place-input" placeholder="Enter a place name" />
+        <input type="hidden" id="place-id" name="place_id" />
+        <input type="hidden" id="place-name" name="name" />
+        <input type="hidden" id="place-location" name="location" />
+        <button type="submit">Submit</button>
     </form>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+    <script {% include 'mapbox-autofill.js' %}></script>
 {% endblock %}
