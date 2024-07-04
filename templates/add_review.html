@@ -2,34 +2,17 @@
 
 {% block content %}
 
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css" />
-    <style>
-        #map {
-            display: none;
-        }
-    </style>
 
     <h1>Add Review</h1>
-        <form>
-            <p>address</p>
-            <input type="text" name="address-1" autocomplete="address-line1" />
-            <p>city</p>
-            <input type="text" name="city" autocomplete="address-level2" />
-            <p>postal</p>
-            <input type="text" name="zip" autocomplete="postal-code" />
-        </form>
+        <div>
+            <p>Search a restaurant</p>
+        <mapbox-search-box
+            access-token='{{ mapbox_access_token }}'
+            proximity="0,0"
+        >
+        </mapbox-search-box>
+        </div>
 
-        <script>
-            const script = document.getElementById('search-js');
-            script.onload = function () {
-                mapboxsearch.config.accessToken = '{{ mapbox_access_token }}'
-
-                mapboxsearch.autofill({
-                    options: {
-                    country: 'fr'
-                    }
-                })
-            };
-        </script>
+    <script src="search_box.js">
+    </script>
 {% endblock %}
