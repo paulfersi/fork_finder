@@ -11,17 +11,25 @@
     </style>
 
     <h1>Add Review</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="text" id="place-input" placeholder="Enter a place name" />
-        <input type="hidden" id="place-id" name="place_id" />
-        <input type="hidden" id="place-name" name="name" />
-        <input type="hidden" id="place-location" name="location" />
-        <button type="submit">Submit</button>
-    </form>
+        <form>
+            <p>address</p>
+            <input type="text" name="address-1" autocomplete="address-line1" />
+            <p>city</p>
+            <input type="text" name="city" autocomplete="address-level2" />
+            <p>postal</p>
+            <input type="text" name="zip" autocomplete="postal-code" />
+        </form>
 
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
-    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
-    <script {% include 'mapbox-autofill.js' %}></script>
+        <script>
+            const script = document.getElementById('search-js');
+            script.onload = function () {
+                mapboxsearch.config.accessToken = '{{ mapbox_access_token }}'
+
+                mapboxsearch.autofill({
+                    options: {
+                    country: 'fr'
+                    }
+                })
+            };
+        </script>
 {% endblock %}
