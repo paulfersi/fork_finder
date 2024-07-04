@@ -99,7 +99,7 @@ class AddReviewView(View):
             )
             review.restaurant = restaurant
             review.save()
-            return redirect('some_view_name')  # Redirect to a relevant page
+            return redirect('feed') 
         return render(request, 'add_review.html', {
             'form': form,
             'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN
