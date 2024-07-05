@@ -14,3 +14,4 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 
 ```
 
+Docs for geocoding api: https://docs.mapbox.com/api/search/geocoding-v5/ 

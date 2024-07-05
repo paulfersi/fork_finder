@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
 from django.contrib.auth.models import User
@@ -52,7 +53,8 @@ def search_user_view(request):
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': MAPBOX_TOKEN})
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN  # Replace with your actual Mapbox access token
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
         form = ReviewForm(request.POST, request.FILES)
@@ -60,19 +62,28 @@ class AddReviewView(View):
             selected_place = json.loads(request.POST.get('selected_place', '{}'))
             place_id = selected_place.get('place_id')
             name = selected_place.get('name')
-            location = selected_place.get('location')
+            address = selected_place.get('address')
+            latitude = selected_place.get('latitude')
+            longitude = selected_place.get('longitude')
 
+            
             restaurant, created = Restaurant.objects.get_or_create(
                 place_id=place_id,
-                defaults={'name': name, 'location': location}
+                defaults={
+                    'name': name,
+                    'address': address,
+                    'latitude': latitude,
+                    'longitude': longitude,
+                }
             )
 
             review = form.save(commit=False)
-            # Assume a user is assigned here, for example:
-            review.user = request.user  # Modify this line as needed based on your application logic
+            review.user = request.user  
             review.restaurant = restaurant
             review.save()
 
-            return redirect('feed')  # Redirect to a success page or another appropriate page
+            return redirect('feed')  # Redirect to your feed or any other view upon successful submission
 
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': MAPBOX_TOKEN})
+        # If form is invalid, render the form again with errors
+        mapbox_access_token = 'YOUR_MAPBOX_ACCESS_TOKEN'  # Replace with your actual Mapbox access token
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})

@@ -27,8 +27,6 @@ class Restaurant(models.Model):
     place_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=60)  
     address = models.CharField(max_length=120)  
-    city_name: models.CharField(max_length=60)  
-    country_name = models.CharField(max_length=60)
     longitude = models.CharField(max_length=255)  
     latitude = models.CharField(max_length=255)    
 
@@ -54,4 +52,3 @@ class Review(models.Model):
             f"{self.restaurant.name} "
             f"({self.created_at:%Y-%m-%d %H:%M}): "
         )
-    

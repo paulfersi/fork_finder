@@ -1,56 +1,79 @@
 {% extends "base.html" %}
 
-
 {% block content %}
-
 <h1>Add Review</h1>
 
-<div>
-    <mapbox-search-box
-        access-token="{{ mapbox_access_token }}"
-        placeholder="Search for a restaurant..."
-        proximity="0,0"
-    >
-    </mapbox-search-box>
-</div>
-
-<form method="post" action="{% url 'add_review' %}" enctype="multipart/form-data">
+<form id="review-form" method="post" action="{% url 'add_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    <label for="restaurant-name">Restaurant Name:</label>
+    <input type="text" id="restaurant-name" name="restaurant_name" required>
+    <button type="button" onclick="searchRestaurant()">Search</button>
 
-    <input type="hidden" id="selected-place" name="selected_place">
-    <button type="submit">Submit</button>
+    <label for="review-body">Review:</label>
+    <textarea id="review-body" name="body" rows="4" cols="50" required></textarea><br>
+
+    <label for="review-rating">Rating (1-5):</label>
+    <input type="number" id="review-rating" name="rating" min="1" max="5" required><br>
+
+    <label for="review-photo">Photo:</label>
+    <input type="file" id="review-photo" name="photo" accept="image/*"><br>
+
+    <div id="restaurant-suggestions" style="display: none;">
+        <p id="suggestion-message"></p>
+        <button type="submit" id="submit-button" style="display: none;">Submit</button>
+    </div>
+
 </form>
 
 <script>
-    document.getElementById('search-js').onload = function () {
-            const searchBox = document.querySelector('mapbox-search-box');
+    function searchRestaurant() {
+        const restaurantName = document.getElementById('restaurant-name').value.trim();
+        if (!restaurantName) {
+            alert('Please enter a restaurant name.');
+            return;
+        }
 
-            searchBox.options = {
-                language: 'en',
-            };
+        // Make API call to Mapbox to fetch restaurant suggestions
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{mapbox_access_token}}`)
+            .then(response => response.json())
+            .then(data => {
+                // Assuming the first result is the most relevant
+                const feature = data.features[0];
 
-            searchBox.addEventListener('retrieve', (e) => {
-                const feature = e.detail;
-                console.log(feature);
-                alert(JSON.stringify(feature, null, 2));
+                if (!feature) {
+                    alert('No restaurant found. Please try again.');
+                    return;
+                }
 
-                const selectedPlace = {
-                    place_id: feature.properties.mapbox_id,
-                    name: feature.properties.name,
+                const suggestedRestaurant = {
+                    place_id: feature.id,
+                    name: feature.text,
                     address: feature.properties.address,
-                    city_name:feature.properties.context.place.name,
-                    country: feature.properties.context.country.name,
-                    latitude: feature.geometry.coordinates[1],
-                    longitude: feature.geometry.coordinates[0],  
+                    latitude: feature.center[1],
+                    longitude: feature.center[0],
                 };
 
-                alert("place saved");
+                // Display suggestion to user
+                const suggestionMessage = `Did you mean ${suggestedRestaurant.name},${suggestedRestaurant.address}?`;
+                document.getElementById('suggestion-message').textContent = suggestionMessage;
+                document.getElementById('restaurant-suggestions').style.display = 'block';
 
-                document.getElementById('selected-place').value = JSON.stringify(selectedPlace);
+                // Store suggestion in hidden input for form submission
+                const selectedPlaceInput = document.createElement('input');
+                selectedPlaceInput.type = 'hidden';
+                selectedPlaceInput.name = 'selected_place';
+                selectedPlaceInput.value = JSON.stringify(suggestedRestaurant);
+                document.getElementById('review-form').appendChild(selectedPlaceInput);
+
+                // Show submit button
+                document.getElementById('submit-button').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching restaurant suggestions:', error);
+                alert('Error fetching restaurant suggestions. Please try again later.');
             });
-    };
+    }
 </script>
 
 {% endblock %}
