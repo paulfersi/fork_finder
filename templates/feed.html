@@ -46,11 +46,10 @@
     <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
         <!-- List of recommended restaurants -->
         <div class="card-columns">
-            {% for restaurant in recommended_restaurants %}
+            {% for review in recommended_reviews %}
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">{{ restaurant.name }}</h5>
-                    <p class="card-text">{{ restaurant.location }}</p>
+                    <h5 class="card-title">{{ review.name }}</h5>
                 </div>
             </div>
             {% endfor %}
