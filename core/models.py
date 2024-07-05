@@ -51,6 +51,7 @@ class Review(models.Model):
     body = models.CharField(max_length=255)
     rating = models.PositiveSmallIntegerField()
     photo = models.ImageField(upload_to='media/review_photos/')
+    is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

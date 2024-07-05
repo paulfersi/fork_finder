@@ -41,6 +41,9 @@ def profile_view(request,pk):
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
 
+def is_critic(user):
+    return user.userprofile.user_type == 'critic'
+
 def search_user_view(request):
     query = request.GET.get('q')
     if query:

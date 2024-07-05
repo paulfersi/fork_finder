@@ -22,7 +22,10 @@
                         <h5 class="card-title">{{ review.restaurant.name }}</h5>
                         <p class="card-text">{{ review.body }}</p>
                         <p class="card-text"><small class="text-muted">Rating: {{ review.rating }}/5</small></p>
-                        <p class="card-text"><small class="text-muted">Posted by: {{ followed.user.username }}</small></p>
+                        <p class="card-text"><small class="text-muted">Posted by: @{{ followed.user.username }}</small></p>
+                        {% if review.is_featured %}
+                            <span class="badge badge-primary">Featured</span>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
