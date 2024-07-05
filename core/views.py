@@ -11,12 +11,14 @@ from django.urls import reverse_lazy
 import json
 from django.conf import settings
 from django.contrib import messages
+from recommendations.utils import get_recommended_reviews
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
 @login_required
 def feed_view(request):
-    return render(request, 'feed.html')
+    recommended_reviews = get_recommended_reviews(request.user)
+    return render(request, 'feed.html', {"recommended_reviews": recommended_reviews})
 
 @login_required
 def account_view(request):
@@ -121,3 +123,19 @@ def delete_review(request, pk):
         return redirect('profile', pk=request.user.profile.pk)
 
     return redirect('profile', pk=request.user.pk)
+
+@login_required
+def check_location(request):
+    if request.user.profile.latitude is None or request.user.profile.longitude is None:
+        return redirect('get_location')
+    return redirect('explore')
+
+def friends_feed(request):
+    user = request.user
+    friends_reviews = Review.objects.filter(user__profile__follows=user.profile)
+
+    context = {
+        'user': user,
+        'friends_reviews': friends_reviews,
+    }
+    return render(request, 'core/friends_feed.html', context)
