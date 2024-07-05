@@ -12,7 +12,7 @@
                     <form method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <a href="{% url 'feed' %}" type="submit" class="btn btn-primary">Login</a>
                     </form>
                 </div>
                 <div class="card-footer text-muted text-center">

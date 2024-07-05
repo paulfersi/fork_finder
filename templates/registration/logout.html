@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Logged Out Successfully</h2>
+                    <p class="card-text">You have been logged out from ForkFinder.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login Again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
