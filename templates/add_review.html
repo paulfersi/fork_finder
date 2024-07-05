@@ -1,32 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Add Review</h1>
 
+<h1 class="mb-4">Add Review</h1>
 <form id="review-form" method="post" action="{% url 'add_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <label for="restaurant-name">Restaurant Name:</label>
-    <input type="text" id="restaurant-name" name="restaurant_name" required>
-    <button type="button" onclick="searchRestaurant()">Search</button>
-
-    <label for="review-body">Review:</label>
-    <textarea id="review-body" name="body" rows="4" cols="50" required></textarea><br>
-
-    <label for="review-rating">Rating (1-5):</label>
-    <input type="number" id="review-rating" name="rating" min="1" max="5" required><br>
-
-    <label for="review-photo">Photo:</label>
-    <input type="file" id="review-photo" name="photo" accept="image/*"><br>
-
-    <div id="restaurant-suggestions" style="display: none;">
-        <p id="suggestion-message"></p>
-        <button type="submit" id="submit-button" style="display: none;">Submit</button>
+    <div class="form-group">
+        <label for="restaurant-name">Restaurant Name:</label>
+        <div class="input-group mb-3">
+            <input type="text" id="restaurant-name" name="restaurant_name" class="form-control" required>
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" onclick="searchRestaurant()">Search</button>
+            </div>
+        </div>
     </div>
 
+    <div class="form-group">
+        <label for="review-body">Review:</label>
+        <textarea id="review-body" name="body" class="form-control" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="review-rating">Rating (1-5):</label>
+        <input type="number" id="review-rating" name="rating" class="form-control" min="1" max="5" required>
+    </div>
+
+    <div class="form-group">
+        <label for="review-photo">Photo:</label>
+        <input type="file" id="review-photo" name="photo" class="form-control-file" accept="image/*">
+    </div>
+
+    <div id="restaurant-suggestions" class="mt-4" style="display: none;">
+        <p>Select the correct restaurant:</p>
+        <div id="suggestions-list" class="list-group mb-3"></div>
+        <div id="map" style="width: 100%; height: 400px; margin-top: 10px;"></div>
+        <button type="submit" id="submit-button" class="btn btn-primary mt-3" style="display: none;">Submit</button>
+    </div>
 </form>
 
+
 <script>
+    mapboxgl.accessToken = '{{ mapbox_access_token }}';
+    let map, marker;
+
     function searchRestaurant() {
         const restaurantName = document.getElementById('restaurant-name').value.trim();
         if (!restaurantName) {
@@ -34,45 +51,72 @@
             return;
         }
 
-        // Make API call to Mapbox to fetch restaurant suggestions
-        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{mapbox_access_token}}`)
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{ mapbox_access_token }}`)
             .then(response => response.json())
             .then(data => {
-                // Assuming the first result is the most relevant
-                const feature = data.features[0];
+                const features = data.features.slice(0, 3); // Get first 3 suggestions
 
-                if (!feature) {
+                if (features.length === 0) {
                     alert('No restaurant found. Please try again.');
                     return;
                 }
 
-                const suggestedRestaurant = {
-                    place_id: feature.id,
-                    name: feature.text,
-                    address: feature.properties.address,
-                    latitude: feature.center[1],
-                    longitude: feature.center[0],
-                };
+                const suggestionsList = document.getElementById('suggestions-list');
+                suggestionsList.innerHTML = ''; // Clear previous suggestions
 
-                // Display suggestion to user
-                const suggestionMessage = `Did you mean ${suggestedRestaurant.name},${suggestedRestaurant.address}?`;
-                document.getElementById('suggestion-message').textContent = suggestionMessage;
+                features.forEach((feature, index) => {
+                    const suggestedRestaurant = {
+                        place_id: feature.id,
+                        name: feature.text,
+                        address: feature.properties.address,
+                        latitude: feature.center[1],
+                        longitude: feature.center[0],
+                    };
+
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                    suggestionItem.innerHTML = `
+                        <input type="radio" id="suggestion-${index}" name="selected_place" value='${JSON.stringify(suggestedRestaurant)}' ${index === 0 ? 'checked' : ''}>
+                        <label for="suggestion-${index}" class="ml-2">${suggestedRestaurant.name}, ${suggestedRestaurant.address}</label>
+                    `;
+                    suggestionsList.appendChild(suggestionItem);
+
+                    // Initialize map and marker for the first suggestion
+                    if (index === 0) {
+                        displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
+                    }
+
+                    // Add event listener to update map when a suggestion is selected
+                    suggestionItem.querySelector('input').addEventListener('change', function () {
+                        displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
+                    });
+                });
+
                 document.getElementById('restaurant-suggestions').style.display = 'block';
-
-                // Store suggestion in hidden input for form submission
-                const selectedPlaceInput = document.createElement('input');
-                selectedPlaceInput.type = 'hidden';
-                selectedPlaceInput.name = 'selected_place';
-                selectedPlaceInput.value = JSON.stringify(suggestedRestaurant);
-                document.getElementById('review-form').appendChild(selectedPlaceInput);
-
-                // Show submit button
                 document.getElementById('submit-button').style.display = 'block';
             })
             .catch(error => {
                 console.error('Error fetching restaurant suggestions:', error);
                 alert('Error fetching restaurant suggestions. Please try again later.');
             });
+    }
+
+    function displayMap(latitude, longitude) {
+        if (!map) {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [longitude, latitude],
+                zoom: 15
+            });
+
+            marker = new mapboxgl.Marker()
+                .setLngLat([longitude, latitude])
+                .addTo(map);
+        } else {
+            map.setCenter([longitude, latitude]);
+            marker.setLngLat([longitude, latitude]);
+        }
     }
 </script>
 

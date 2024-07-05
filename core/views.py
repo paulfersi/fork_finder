@@ -10,6 +10,7 @@ from django.views import View
 from django.urls import reverse_lazy
 import json
 from django.conf import settings
+from django.contrib import messages
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -103,3 +104,14 @@ def edit_review(request, pk):
         form = ReviewForm(instance=review)
     
     return render(request, 'edit_review.html', {'form': form, 'review': review})
+
+@login_required
+def delete_review(request, pk):
+    review = get_object_or_404(Review, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, 'Review deleted successfully.')
+        return redirect('profile', pk=request.user.profile.pk)
+
+    return redirect('profile', pk=request.user.pk)
