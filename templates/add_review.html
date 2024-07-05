@@ -1,23 +1,49 @@
 {% extends "base.html" %}
 
+
 {% block content %}
-{% load static %}
 
 <h1>Add Review</h1>
-    <div>
-        <p>Search for a restaurant:</p>
-        <mapbox-search-box
-            access-token='{{ mapbox_access_token }}'
-            proximity="0,0"
-            placeholder="Search for a restaurant..."
-            types="poi"
-            id="search-box"
-            name="search-box"
-        >
-        </mapbox-search-box>
-    </div>
 
-    <button type="submit">Submit Review</button>
-    <script src={% static 'js/search_box.js' %}></script>
+<div>
+    <mapbox-search-box
+        access-token="{{ mapbox_access_token }}"
+        placeholder="Search for a restaurant..."
+        proximity="0,0"
+    >
+    </mapbox-search-box>
+</div>
+
+<form method="post" action="{% url 'add_review' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" id="selected-place" name="selected_place">
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    document.getElementById('search-js').onload = function () {
+            const searchBox = document.querySelector('mapbox-search-box');
+
+            searchBox.options = {
+                language: 'es',
+                country: 'MX'
+            };
+
+            searchBox.addEventListener('retrieve', (e) => {
+                const feature = e.detail;
+                console.log(feature);
+                alert(JSON.stringify(feature, null, 2));
+
+                const selectedPlace = {
+                    place_id: feature.id,
+                    name: feature.text,
+                    location: feature.place_name
+                };
+
+                document.getElementById('selected-place').value = JSON.stringify(selectedPlace);
+            });
+    };
+</script>
 
 {% endblock %}
