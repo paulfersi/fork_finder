@@ -3,9 +3,11 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import CreateView
 from django.views import View
 from django.conf import settings
-import json 
+from django.urls import reverse_lazy
 
 @login_required
 def feed_view(request):
@@ -16,6 +18,10 @@ def account_view(request):
     # logic to get account data
     return render(request, 'account.html')
 
+class UserCreateView(CreateView): 
+    form_class = UserCreationForm 
+    template_name = "registration/user_create.html" 
+    success_url = reverse_lazy("login")
 
 def profile_view(request,pk):
     profile = Profile.objects.get(pk=pk)
@@ -49,10 +55,3 @@ class AddReviewView(View):
             'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN
         })
     
-
-def save_review(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        restaurant = Restaurant()
-        restaurant.name = data['name']
-        restaurant.location = data['location']
