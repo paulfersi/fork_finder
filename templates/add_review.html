@@ -16,7 +16,9 @@
 
 <form method="post" action="{% url 'add_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
+
     {{ form.as_p }}
+    
     <input type="hidden" id="selected-place" name="selected_place">
     <button type="submit">Submit</button>
 </form>
@@ -26,8 +28,7 @@
             const searchBox = document.querySelector('mapbox-search-box');
 
             searchBox.options = {
-                language: 'es',
-                country: 'MX'
+                language: 'en',
             };
 
             searchBox.addEventListener('retrieve', (e) => {
@@ -36,10 +37,16 @@
                 alert(JSON.stringify(feature, null, 2));
 
                 const selectedPlace = {
-                    place_id: feature.id,
-                    name: feature.text,
-                    location: feature.place_name
+                    place_id: feature.properties.mapbox_id,
+                    name: feature.properties.name,
+                    address: feature.properties.address,
+                    city_name:feature.properties.context.place.name,
+                    country: feature.properties.context.country.name,
+                    latitude: feature.geometry.coordinates[1],
+                    longitude: feature.geometry.coordinates[0],  
                 };
+
+                alert("place saved");
 
                 document.getElementById('selected-place').value = JSON.stringify(selectedPlace);
             });
