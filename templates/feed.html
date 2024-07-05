@@ -16,25 +16,35 @@
         <div class="card-columns">
             {% for followed in user.profile.follows.all %}
                 {% for review in followed.user.reviews.all %}
-                <div class="card mb-4">
-                    <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ review.restaurant.name }}</h5>
-                        <p class="card-text">{{ review.body }}</p>
-                        <p class="card-text"><small class="text-muted">Rating: {{ review.rating }}/5</small></p>
-                        <p class="card-text"><small class="text-muted">Posted by: @{{ followed.user.username }}</small></p>
-                        {% if review.is_featured %}
-                            <span class="badge badge-primary">Featured</span>
-                        {% endif %}
+                    {% if review.is_featured %}
+                    <div class="card border-primary mb-3">
+                        <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                        <div class="card-body">
+                            <h5 class="card-title">  {{ review.restaurant.name }} <img src="{{ MEDIA_URL }}verified.png" alt="Verified" style="width: 20px; height: 20px;"></h5>
+                            <p class="card-text">{{ review.body }}</p>
+                            <p class="card-text"><small class="text-muted">Rating: {{ review.rating }}/5</small></p>
+                            <p class="card-text"><small class="text-muted">Posted by critic: @{{ followed.user.username }}</small></p>
+                
+                        </div>
                     </div>
-                </div>
+                    {% else %}
+                    <div class="card mb-3">
+                        <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                            <p class="card-text">{{ review.body }}</p>
+                            <p class="card-text"><small class="text-muted">Rating: {{ review.rating }}/5</small></p>
+                            <p class="card-text"><small class="text-muted">Posted by: @{{ followed.user.username }}</small></p>
+                        </div>
+                    </div>
+                    {% endif %}
                 {% endfor %}
             {% endfor %}
         </div>
 
     </div>
     <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
-        <!-- List of recommended restaurants in card format -->
+        <!-- List of recommended restaurants -->
         <div class="card-columns">
             {% for restaurant in recommended_restaurants %}
             <div class="card mb-4">

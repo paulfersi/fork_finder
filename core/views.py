@@ -42,7 +42,7 @@ def profile_view(request,pk):
     return render(request, "profile.html", {"profile": profile})
 
 def is_critic(user):
-    return user.userprofile.user_type == 'critic'
+    return user.profile.user_type == 'critic'
 
 def search_user_view(request):
     query = request.GET.get('q')
@@ -84,14 +84,17 @@ class AddReviewView(View):
 
             review = form.save(commit=False)
             review.user = request.user  
+            if is_critic(request.user):
+                review.is_featured = True
+            else:
+                review.is_featured = False
             review.restaurant = restaurant
             review.save()
 
-            return redirect('feed')  # Redirect to your feed or any other view upon successful submission
+            return redirect('feed') 
 
-        # If form is invalid, render the form again with errors
-        mapbox_access_token = 'YOUR_MAPBOX_ACCESS_TOKEN'  # Replace with your actual Mapbox access token
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
+        
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': MAPBOX_TOKEN})
 
 
 @login_required

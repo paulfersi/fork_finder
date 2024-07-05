@@ -6,6 +6,7 @@ from .models import Profile,Review,Restaurant
 
 class ProfileInline(admin.StackedInline):
     model = Profile
+    fields = ["user","user_type"]
 
 class UserAdmin(admin.ModelAdmin):
     model = User
