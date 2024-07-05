@@ -12,13 +12,20 @@ def create_profile(sender, instance, created, **kwargs):
         user_profile.save()
 
 class Profile(models.Model):
+    USER_TYPE_CHOICES = (
+        ('regular', 'Regular User'),
+        ('critic', 'Culinary Critic'),
+        ('admin', 'Admin'),
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, default='regular')
     follows = models.ManyToManyField(
         "self",
         related_name="followed_by",
         symmetrical=False,
         blank=True
     )
+
 
     def __str__(self):
         return self.user.username
@@ -41,7 +48,7 @@ class Review(models.Model):
         User, related_name="reviews", on_delete=models.CASCADE)
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE)
-    body = models.CharField(max_length=140)
+    body = models.CharField(max_length=255)
     rating = models.PositiveSmallIntegerField()
     photo = models.ImageField(upload_to='media/review_photos/')
     created_at = models.DateTimeField(auto_now_add=True)

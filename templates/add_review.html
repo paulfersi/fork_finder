@@ -51,7 +51,9 @@
             return;
         }
 
-        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{ mapbox_access_token }}`)
+        const bboxEurope = '-23.958156,31.052934,44.830131,71.185989';
+
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{ mapbox_access_token }}&bbox=${bboxEurope}`)
             .then(response => response.json())
             .then(data => {
                 const features = data.features.slice(0, 3); // Get first 3 suggestions
@@ -81,12 +83,10 @@
                     `;
                     suggestionsList.appendChild(suggestionItem);
 
-                    // Initialize map and marker for the first suggestion
                     if (index === 0) {
                         displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
                     }
 
-                    // Add event listener to update map when a suggestion is selected
                     suggestionItem.querySelector('input').addEventListener('change', function () {
                         displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
                     });
