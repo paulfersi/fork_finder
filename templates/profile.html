@@ -5,18 +5,17 @@
 <div class="container">
     <div class="row align-items-center mb-4">
         <div class="col-md-4">
-            <h2>@{{ profile.user.username }}</h2>
+            <h2>{{ profile.user.username }}</h2>
         </div>
         <div class="col-md-4 text-center">
-            <h5>{{ profile.follows.count }}</strong> Following</h5>
+            <h5>{{ profile.follows.count }} Following</h5>
         </div>
         <div class="col-md-4 text-center">
-            <h5>{{ profile.followed_by.count }}</strong> Followers</h5>
+            <h5>{{ profile.followed_by.count }} Followers</h5>
         </div>
     </div>
 
-    <!-- For users other than the current -->
-    {% if profile.user != request.user %} 
+    {% if profile.user != request.user %}
         <form method="post" class="mb-4">
             {% csrf_token %}
             <div class="btn-group" role="group" aria-label="Basic example">
@@ -36,11 +35,14 @@
             {% for review in profile.user.reviews.all %}
             <div class="col-md-4 mb-3">
                 <div class="card">
-                    <img src="{{ review.photo }}" class="card-img-top" alt="Restaurant Photo">
+                    <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
                     <div class="card-body">
                         <h5 class="card-title">{{ review.restaurant.name }}</h5>
                         <p class="card-text">{{ review.body }}</p>
                         <p class="card-text"><small class="text-muted">Rating: {{ review.rating }}/5</small></p>
+                        {% if review.user == request.user %}
+                        <a href="{% url 'edit_review' review.pk %}" class="btn btn-primary">Edit</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

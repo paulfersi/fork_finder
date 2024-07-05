@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
@@ -50,6 +50,7 @@ def search_user_view(request):
             return render(request, 'user_not_found.html', {'query': query})
     return redirect('feed')
 
+
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
@@ -87,3 +88,18 @@ class AddReviewView(View):
         # If form is invalid, render the form again with errors
         mapbox_access_token = 'YOUR_MAPBOX_ACCESS_TOKEN'  # Replace with your actual Mapbox access token
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
+
+
+@login_required
+def edit_review(request, pk):
+    review = get_object_or_404(Review, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, request.FILES, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', pk=request.user.pk)
+    else:
+        form = ReviewForm(instance=review)
+    
+    return render(request, 'edit_review.html', {'form': form, 'review': review})
