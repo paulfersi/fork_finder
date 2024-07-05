@@ -25,9 +25,15 @@ def account_view(request):
     # logic to get account data
     return render(request, 'account.html')
 
-class UserCreateView(CreateView): 
-    form_class = UserCreationForm 
-    template_name = "registration/user_create.html" 
+def landing_page_view(request):
+    return render(request, 'landing_page.html')
+
+def pro_login_view(request):
+    return render(request, 'registration/pro_login.html')
+
+class UserCreateView(CreateView):
+    form_class = UserCreationForm
+    template_name = "registration/user_create.html"
     success_url = reverse_lazy("login")
 
 def profile_view(request,pk):

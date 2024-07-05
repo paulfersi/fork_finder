@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
-from core.views import UserCreateView
+from core.views import UserCreateView, landing_page_view, pro_login_view
 from django.conf.urls.static import static
 from django.conf import settings
 from .settings import MEDIA_URL, MEDIA_ROOT
@@ -30,4 +30,6 @@ urlpatterns = [
     path("login/",auth_views.LoginView.as_view(), name="login"), 
     path("logout/",auth_views.LogoutView.as_view(), name="logout"),
     path('',include('recommendations.urls')),
+    path('', landing_page_view, name='landing_page'),
+    path('pro-login/', pro_login_view, name='pro_login'),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)

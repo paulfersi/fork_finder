@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Normal Login</h5>
+                <p class="card-text">Login as a normal user.</p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Pro Login</h5>
+                <p class="card-text">Login as a culinary critic.</p>
+                <a href="{% url 'pro_login' %}" class="btn btn-primary">Pro Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
