@@ -56,30 +56,29 @@
             {% endfor %}
         </div>
     </div>
-</div>
-    
-<div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
-        <div class="card-columns">
-            {% for review in recommended_reviews %}
-                <div class="card mb-4">
-                    <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ review.restaurant.name }}</h5>
-                        <p class="card-text">{{ review.body }}</p>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                    <span class="star-rating">
-                                        {% for i in "54321" %}
-                                            <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
-                                        {% endfor %}
-                                    </span>
-                            </small>
-                        </p>
-                        <p class="card-text"><small class="text-muted">Posted by: @{{ review.user.username }}</small></p>
+        
+    <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
+            <div class="card-columns">
+                {% for review in recommended_reviews %}
+                    <div class="card mb-4">
+                        <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                            <p class="card-text">{{ review.body }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                        <span class="star-rating">
+                                            {% for i in "54321" %}
+                                                <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
+                                            {% endfor %}
+                                        </span>
+                                </small>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Posted by: @{{ review.user.username }}</small></p>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
     </div>
 </div>
 
