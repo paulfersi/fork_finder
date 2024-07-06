@@ -12,31 +12,36 @@ def haversine(lon1, lat1, lon2, lat2):
     dlat = lat2 - lat1 
     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a)) 
-    r = 6371 
+    r = 6371 #in km
     return c * r
 
 def get_recommended_reviews(user):
-    if not user.profile.latitude or not user.profile.longitude:
+    if not (user.profile.latitude and user.profile.longitude):
         return []
 
-    # Get user's location
     user_lat = float(user.profile.latitude)
     user_lon = float(user.profile.longitude)
-    
-    # Get all reviews
+
     reviews = Review.objects.all()
-    
-    # Calculate the distance and followers score for each review
     recommended_reviews = []
+
     for review in reviews:
         restaurant = review.restaurant
+        reviewer_profile = review.user.profile
+
+        if not (reviewer_profile.latitude and reviewer_profile.longitude):
+            continue
+
         distance = haversine(user_lon, user_lat, float(restaurant.longitude), float(restaurant.latitude))
-        followers_count = review.user.profile.followed_by.count()
-        score = followers_count - distance  # you can adjust this formula as needed
+        followers_count = reviewer_profile.followed_by.count()
+        
+        #  scoring function
+        score = followers_count / (distance+1)
+        
         recommended_reviews.append((review, score))
-    
-    # Sort reviews by score
+
+    # Sort reviews by score in descending order
     recommended_reviews.sort(key=lambda x: x[1], reverse=True)
-    
-    # Return the sorted reviews, just return the review part
-    return [review for review, score in recommended_reviews]
+
+    top_10_reviews = [review for review, score in recommended_reviews[:10]]
+    return top_10_reviews

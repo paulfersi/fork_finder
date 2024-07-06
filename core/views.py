@@ -151,21 +151,6 @@ def delete_review(request, pk):
 
     return redirect('profile', pk=request.user.pk)
 
-@login_required
-def check_location(request):
-    if request.user.profile.latitude is None or request.user.profile.longitude is None:
-        return redirect('get_location')
-    return redirect('explore')
-
-def friends_feed(request):
-    user = request.user
-    friends_reviews = Review.objects.filter(user__profile__follows=user.profile)
-
-    context = {
-        'user': user,
-        'friends_reviews': friends_reviews,
-    }
-    return render(request, 'core/friends_feed.html', context)
 
 @login_required
 @csrf_protect

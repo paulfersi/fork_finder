@@ -1,33 +1,73 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 
 {% block content %}
-<h2 class="mb-4">Feed</h2>
-<ul class="nav nav-tabs" id="feedTabs" role="tablist">
-    <li class="nav-item">
-        <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="true">Friends' Advices</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" id="explore-tab" data-toggle="tab" href="#explore" role="tab" aria-controls="explore" aria-selected="false">Explore</a>
-    </li>
-</ul>
-<div class="tab-content mt-3" id="feedTabsContent">
-    <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-        <div class="card-columns">
-            {% for followed in user.profile.follows.all %}
-                {% for review in followed.user.reviews.all %}
+    <h2 class="mb-4">Feed</h2>
+    <ul class="nav nav-tabs" id="feedTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="true">Friends' Advices</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="explore-tab" data-toggle="tab" href="#explore" role="tab" aria-controls="explore" aria-selected="false">Explore</a>
+        </li>
+    </ul>
+    <div class="tab-content mt-3" id="feedTabsContent">
+        <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+            <div class="card-columns">
+                {% for followed in user.profile.follows.all %}
+                    {% for review in followed.user.reviews.all %}
+                        <div class="card mb-3 {% if review.is_featured %}border-primary{% endif %}">
+                            <div class="card-header">
+                                <h5>@{{ review.user.username }} 
+                                    {% if review.is_featured %}
+                                        <i class="bi bi-patch-check-fill text-primary" title="Verified"></i>
+                                    {% endif %}
+                                </h5>
+                            </div>
+                            <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                                <p class="card-text">{{ review.body }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <span class="star-rating">
+                                            {% for i in "54321" %}
+                                                <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
+                                            {% endfor %}
+                                        </span>
+                                    </small>
+                                </p>
+                                <form method="post" action="{% url 'feed' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="review_id" value="{{ review.id }}">
+                                    <button type="submit" class="btn btn-link">
+                                        {% if review in favorite_reviews %}
+                                            <i class="bi bi-heart-fill text-danger" style="font-size: 2rem;"></i>
+                                        {% else %}
+                                            <i class="bi bi-heart text-danger" style="font-size: 2rem;"></i>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
+            <div class="card-columns">
+                {% for review in recommended_reviews %}
                     <div class="card mb-3 {% if review.is_featured %}border-primary{% endif %}">
-                          <div class="card-header">
+                        <div class="card-header">
                             <h5>@{{ review.user.username }} 
                                 {% if review.is_featured %}
                                     <i class="bi bi-patch-check-fill text-primary" title="Verified"></i>
                                 {% endif %}
                             </h5>
-                            </div>
+                        </div>
                         <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
                         <div class="card-body">
-                            <h5 class="card-title">
-                                {{ review.restaurant.name }}
-                            </h5>
+                            <h5 class="card-title">{{ review.restaurant.name }}</h5>
                             <p class="card-text">{{ review.body }}</p>
                             <p class="card-text">
                                 <small class="text-muted">
@@ -49,37 +89,10 @@
                                     {% endif %}
                                 </button>
                             </form>
-
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        </div>
-    </div>
-        
-    <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
-            <div class="card-columns">
-                {% for review in recommended_reviews %}
-                    <div class="card mb-4">
-                        <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ review.restaurant.name }}</h5>
-                            <p class="card-text">{{ review.body }}</p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                        <span class="star-rating">
-                                            {% for i in "54321" %}
-                                                <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
-                                            {% endfor %}
-                                        </span>
-                                </small>
-                            </p>
-                            <p class="card-text"><small class="text-muted">Posted by: @{{ review.user.username }}</small></p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+        </div>
     </div>
-</div>
-
 {% endblock %}
