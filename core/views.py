@@ -11,8 +11,9 @@ from django.urls import reverse_lazy
 import json
 from django.conf import settings
 from django.contrib import messages
-from recommendations.utils import get_recommended_reviews
+from .utils import get_recommended_reviews
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -165,3 +166,16 @@ def friends_feed(request):
         'friends_reviews': friends_reviews,
     }
     return render(request, 'core/friends_feed.html', context)
+
+@login_required
+@csrf_protect
+def get_location(request):
+    if request.method == 'POST':
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        profile = Profile.objects.get(user=request.user)
+        profile.latitude = latitude
+        profile.longitude = longitude
+        profile.save()
+        return redirect('feed')
+    return render(request, 'get_location.html')

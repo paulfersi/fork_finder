@@ -1,4 +1,4 @@
-from core.models import Review, Profile
+from .models import Review, Profile
 import math
 
 def haversine(lon1, lat1, lon2, lat2):
