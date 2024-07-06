@@ -167,3 +167,8 @@ def get_location(request):
         profile.save()
         return redirect('feed')
     return render(request, 'get_location.html')
+
+
+def view_on_map(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    return render(request, 'map.html', {'restaurant': restaurant, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
