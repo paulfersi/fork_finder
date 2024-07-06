@@ -27,6 +27,7 @@ class Profile(models.Model):
     )
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    favorite_reviews = models.ManyToManyField('Review', related_name='favorited_by_profiles', blank=True)
 
 
     def __str__(self):
@@ -56,7 +57,6 @@ class Review(models.Model):
     photo = models.ImageField(upload_to='media/review_photos/')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    favorited_by = models.ManyToManyField(Profile, related_name='favorite_reviews', blank=True)
 
     def __str__(self):
         return (

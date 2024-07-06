@@ -12,6 +12,7 @@ import json
 from django.conf import settings
 from django.contrib import messages
 from recommendations.utils import get_recommended_reviews
+from django.views.decorators.http import require_POST
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -31,6 +32,7 @@ def feed_view(request):
             profile.save()
 
     return render(request, 'feed.html', {"recommended_reviews": recommended_reviews})
+
 
 @login_required
 def account_view(request):

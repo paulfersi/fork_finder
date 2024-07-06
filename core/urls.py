@@ -11,5 +11,4 @@ urlpatterns = [
     path('search/', search_user_view, name='search_user'),
     path('edit_review/<int:pk>/', edit_review, name='edit_review'),
     path('review/delete/<int:pk>/', delete_review, name='delete_review'),
-    #path('save_review/',save_review,name  ='save_review')
 ] 
