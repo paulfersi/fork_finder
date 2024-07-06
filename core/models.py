@@ -56,6 +56,7 @@ class Review(models.Model):
     photo = models.ImageField(upload_to='media/review_photos/')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    favorited_by = models.ManyToManyField(Profile, related_name='favorite_reviews', blank=True)
 
     def __str__(self):
         return (
