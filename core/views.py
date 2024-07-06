@@ -18,6 +18,18 @@ MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 @login_required
 def feed_view(request):
     recommended_reviews = get_recommended_reviews(request.user)
+    profile = request.user.profile
+    if request.method == "POST":
+        data = request.POST
+        review_id = data.get("review_id")
+        if review_id:
+            review = Review.objects.get(pk=review_id)
+            if profile.favorite_reviews.filter(pk=review_id).exists():
+                profile.favorite_reviews.remove(review)
+            else:
+                profile.favorite_reviews.add(review)
+            profile.save()
+
     return render(request, 'feed.html', {"recommended_reviews": recommended_reviews})
 
 @login_required
