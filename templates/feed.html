@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2 class="mb-4">Feed</h2>
 <ul class="nav nav-tabs" id="feedTabs" role="tablist">
@@ -27,14 +26,10 @@
                             <p class="card-text">{{ review.body }}</p>
                             <p class="card-text">
                                 <small class="text-muted">
-                                    Rating:
+                                    Rating: {{ review.rating }}
                                     <span class="star-rating">
-                                        {% for i in "12345" %}
-                                            <label style="color: 
-                                            {% if forloop.counter <= review.rating %}#f5c518
-                                            {% else %}#ddd
-                                            {% endif %};">&#9733;
-                                            </label>
+                                        {% for i in "54321" %}
+                                            <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
                                         {% endfor %}
                                     </span>
                                 </small>
@@ -57,16 +52,12 @@
                         <p class="card-text">{{ review.body }}</p>
                         <p class="card-text">
                             <small class="text-muted">
-                                Rating:
-                                <span class="star-rating">
-                                    {% for i in "12345" %}
-                                        <label style="color: 
-                                        {% if forloop.counter <= review.rating %}#f5c518
-                                        {% else %}#ddd
-                                        {% endif %};">&#9733;
-                                        </label>
-                                    {% endfor %}
-                                </span>
+                                Rating: {{ review.rating }}
+                                    <span class="star-rating">
+                                        {% for i in "54321" %}
+                                            <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
+                                        {% endfor %}
+                                    </span>
                             </small>
                         </p>
                         <p class="card-text"><small class="text-muted">Posted by: @{{ review.user.username }}</small></p>
