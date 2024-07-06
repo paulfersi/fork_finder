@@ -1,3 +1,6 @@
+# Fork Finder
+
+This is my final project for the Web Technologies course.
 
 
 ## Prerequisites
