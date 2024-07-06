@@ -3,8 +3,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from core.models import Profile
-from core.models import Review
-from .utils import get_recommended_reviews
 
 @login_required
 @csrf_protect
@@ -16,5 +14,5 @@ def get_location(request):
         profile.latitude = latitude
         profile.longitude = longitude
         profile.save()
-        return redirect('explore')
+        return redirect('feed')
     return render(request, 'get_location.html')

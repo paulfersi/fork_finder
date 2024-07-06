@@ -4,6 +4,7 @@
 <h2>Enter Your Location</h2>
 <p>We need your location to provide better recommendations. Please allow access to your location.</p>
 <button id="get-location-btn">Get Location</button>
+<button id="refuse-location-btn">Refuse</button>
 
 <form id="location-form" method="post" style="display: none;">
     {% csrf_token %}
@@ -16,19 +17,25 @@
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet" />
 
 <script>
-document.getElementById('get-location-btn').onclick = function() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            document.getElementById('latitude').value = position.coords.latitude;
-            document.getElementById('longitude').value = position.coords.longitude;
-            document.getElementById('location-form').style.display = 'block';
-            alert(position.coords.latitude);
-        }, function(error) {
-            alert('Error getting location: ' + error.message);
-        });
-    } else {
-        alert('Geolocation is not supported by this browser.');
-    }
-};
+    document.getElementById('get-location-btn').onclick = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
+                document.getElementById('location-form').style.display = 'block';
+                alert(position.coords.latitude);
+            }, function(error) {
+                alert('Error getting location: ' + error.message);
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    };
+
+    document.getElementById('refuse-location-btn').onclick = function() {
+        document.getElementById('latitude').value = 44.647129; // Default latitude
+        document.getElementById('longitude').value = 10.925227; // Default longitude
+        document.getElementById('location-form').style.display = 'block';
+    };
 </script>
 {% endblock %}
