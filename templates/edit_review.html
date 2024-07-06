@@ -8,7 +8,6 @@
         {{ form.as_p }}
         
         <div class="form-group">
-            <label for="review-rating">Rating (1-5):</label>
             <div class="star-rating">
                 <input type="radio" id="star5" name="rating" value="5" {% if form.instance.rating == 5 %}checked{% endif %}><label for="star5" title="5 stars">&#9733;</label>
                 <input type="radio" id="star4" name="rating" value="4" {% if form.instance.rating == 4 %}checked{% endif %}><label for="star4" title="4 stars">&#9733;</label>
