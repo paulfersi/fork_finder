@@ -34,6 +34,17 @@
                                     </span>
                                 </small>
                             </p>
+                            <form method="post" action="{% url 'feed' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ review.id }}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    {% if review in favorite_reviews %}
+                                        Remove from Favorites
+                                    {% else %}
+                                        Add to Favorites
+                                    {% endif %}
+                                </button>
+                            </form>
                         </div>
                     </div>
                 {% endfor %}
