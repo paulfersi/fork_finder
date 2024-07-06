@@ -27,64 +27,109 @@
                 {% endif %}
             </div>
         </form>
+    {% else %}
+        <!-- Navigation tabs for My Reviews and Favorite Reviews -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="my-reviews-tab" data-toggle="tab" href="#my-reviews" role="tab" aria-controls="my-reviews" aria-selected="true">My Reviews</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="favorite-reviews-tab" data-toggle="tab" href="#favorite-reviews" role="tab" aria-controls="favorite-reviews" aria-selected="false">Favorite Reviews</a>
+            </li>
+        </ul>
     {% endif %}
 
-    <div class="container">
-        <h3 class="mb-4">Reviews:</h3>
-        <div class="row">
-            {% for review in profile.user.reviews.all %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ review.restaurant.name }}</h5>
-                        <p class="card-text">{{ review.body }}</p>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                <span class="star-rating">
-                                    {% for i in "54321" %}
-                                        <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
-                                    {% endfor %}
-                                </span>
-                            </small>
-                        </p>
-                        <!-- Ability to review or delete reviews (only if it's the user's reviews) -->
-                        {% if review.user == request.user %}
-                        <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
+    <div class="tab-content" id="myTabContent" >
+        <div class="tab-pane fade show active" id="my-reviews" role="tabpanel" aria-labelledby="my-reviews-tab">
+            <div class="container">
+                <h3 class="mb-4">My Reviews:</h3>
+                <div class="row">
+                    {% for review in profile.user.reviews.all %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                                <p class="card-text">{{ review.body }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <span class="star-rating">
+                                            {% for i in "54321" %}
+                                                <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
+                                            {% endfor %}
+                                        </span>
+                                    </small>
+                                </p>
+                                {% if review.user == request.user %}
+                                    <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
 
-                        <!--Delete confirmation -->
-                        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ review.pk }}">
-                            Delete
-                        </button>
+                                    <!-- Delete confirmation -->
+                                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ review.pk }}">
+                                        Delete
+                                    </button>
 
-                        <div class="modal fade" id="deleteModal{{ review.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ review.pk }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteModalLabel{{ review.pk }}">Confirm Deletion</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                                    <div class="modal fade" id="deleteModal{{ review.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ review.pk }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel{{ review.pk }}">Confirm Deletion</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this review?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_review' review.pk %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete this review?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <form method="post" action="{% url 'delete_review' review.pk %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endif %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% endfor %}
         </div>
+        
+        <!-- Favorite Reviews tab pane -->
+        {% if profile.user == request.user %}
+        <div class="tab-pane fade" id="favorite-reviews" role="tabpanel" aria-labelledby="favorite-reviews-tab">
+            <div class="container">
+                <h3 class="mb-4">Favorite Reviews:</h3>
+                <div class="row">
+                    {% for review in request.user.profile.favorite_reviews.all %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ review.photo.url }}" class="card-img-top" alt="Restaurant Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                                <p class="card-text">{{ review.body }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <span class="star-rating">
+                                            {% for i in "54321" %}
+                                                <label style="color: {% if i|add:0 <= review.rating %}#f5c518{% else %}#ddd{% endif %};">&#9733;</label>
+                                            {% endfor %}
+                                        </span>
+                                    </small>
+                                </p>
+                                <a href="{% url 'view_on_map' review.restaurant.id %}" class="btn btn-outline-primary">View on Map</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
