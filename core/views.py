@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm
@@ -14,6 +14,7 @@ from django.contrib import messages
 from .utils import get_recommended_reviews
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -84,10 +85,11 @@ def search_user_view(request):
     return redirect('feed')
 
 
+@method_decorator(login_required, name='dispatch')
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
-        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN  
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
@@ -100,7 +102,6 @@ class AddReviewView(View):
             latitude = selected_place.get('latitude')
             longitude = selected_place.get('longitude')
 
-            
             restaurant, created = Restaurant.objects.get_or_create(
                 place_id=place_id,
                 defaults={
@@ -112,20 +113,22 @@ class AddReviewView(View):
             )
 
             review = form.save(commit=False)
-            review.user = request.user  
-            if is_critic(request.user):
+            review.user = request.user
+            review.restaurant = restaurant
+
+            # Check if the user has permission to mark a review as featured
+            if request.user.has_perm('core.mark_featured_review'):
                 review.is_featured = True
             else:
                 review.is_featured = False
-            review.restaurant = restaurant
+
             review.save()
 
-            return redirect('feed') 
+            return redirect('feed')  # Redirect to the feed page after successful review submission
 
-        
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': MAPBOX_TOKEN})
-
-
+        # If form is invalid, re-render the form with errors
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
+    
 @login_required
 def edit_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)

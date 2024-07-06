@@ -22,7 +22,7 @@ def get_recommended_reviews(user):
     user_lat = float(user.profile.latitude)
     user_lon = float(user.profile.longitude)
 
-    reviews = Review.objects.all()
+    reviews = Review.objects.all().exclude(user=user)
     recommended_reviews = []
 
     for review in reviews:

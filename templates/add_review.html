@@ -49,6 +49,14 @@
                             <div id="map" style="width: 100%; height: 400px; margin-top: 10px;"></div>
                             <button type="submit" id="submit-button" class="btn btn-primary mt-3" style="display: none;">Submit</button>
                         </div>
+
+                        {% if request.user.profile.is_culinary_critic %}
+                            <div class="form-group form-check">
+                                <input type="checkbox" id="featured-review" name="is_featured" class="form-check-input">
+                                <label for="featured-review" class="form-check-label">Mark as Featured</label>
+                            </div>
+                        {% endif %}
+                        
                     </form>
                 </div>
             </div>
