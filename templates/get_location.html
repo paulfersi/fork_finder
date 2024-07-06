@@ -3,27 +3,48 @@
 {% block content %}
 <h2>Enter Your Location</h2>
 <p>We need your location to provide better recommendations. Please allow access to your location.</p>
-<button id="get-location-btn">Get Location</button>
-<button id="refuse-location-btn">Refuse</button>
+<button id="open-location-modal-btn" class="btn btn-primary">Enter Location</button>
 
-<form id="location-form" method="post" style="display: none;">
-    {% csrf_token %}
-    <input type="hidden" id="latitude" name="latitude">
-    <input type="hidden" id="longitude" name="longitude">
-    <button type="submit">Submit</button>
-</form>
+<!-- Location Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationModalLabel">Enter Your Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>We need your location to provide better recommendations.</p>
+                <button id="get-location-btn" class="btn btn-primary">Get Location</button>
+                <button id="refuse-location-btn" class="btn btn-secondary">Refuse</button>
 
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet" />
+                <form id="location-form" method="post" style="display: none;">
+                    {% csrf_token %}
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
+    // Show the modal when the page is loaded (optional)
+    $(document).ready(function() {
+        $('#locationModal').modal('show');
+    });
+
+    // Handle gt location
     document.getElementById('get-location-btn').onclick = function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 document.getElementById('latitude').value = position.coords.latitude;
                 document.getElementById('longitude').value = position.coords.longitude;
                 document.getElementById('location-form').style.display = 'block';
-                alert(position.coords.latitude);
+                $('#locationModal').modal('hide'); // Hide modal after getting location
             }, function(error) {
                 alert('Error getting location: ' + error.message);
             });
@@ -32,10 +53,12 @@
         }
     };
 
+    // Handle refusing location
     document.getElementById('refuse-location-btn').onclick = function() {
         document.getElementById('latitude').value = 44.647129; // Default latitude
         document.getElementById('longitude').value = 10.925227; // Default longitude
         document.getElementById('location-form').style.display = 'block';
+        $('#locationModal').modal('hide'); // Hide modal after setting default location
     };
 </script>
 {% endblock %}

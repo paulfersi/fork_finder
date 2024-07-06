@@ -66,7 +66,7 @@ def search_user_view(request):
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
-        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN  # Replace with your actual Mapbox access token
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN  
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
