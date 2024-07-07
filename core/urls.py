@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import feed_view, account_view,profile_view,search_user_view, AddReviewView, edit_review, delete_review, get_location,view_on_map
+from .views import FeedView, account_view,profile_view,search_user_view, AddReviewView, edit_review, delete_review, get_location,view_on_map
 
 STATIC_URL = "/media/static"
 
 urlpatterns = [
-    path('feed/', feed_view, name="feed"),
+    path('feed/', FeedView.as_view(), name="feed"),
     path('account/', account_view, name='account'),
     path('add_review/', AddReviewView.as_view(), name='add_review'),
     path("profile/<int:pk>/", profile_view, name="profile"),

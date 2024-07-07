@@ -18,13 +18,21 @@ from django.utils.decorators import method_decorator
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
-@login_required
-def feed_view(request):
-    recommended_reviews = get_recommended_reviews(request.user)
-    profile = request.user.profile
-    favorite_reviews = profile.favorite_reviews.all()
+class FeedView(View):
+    template_name = 'feed.html'
 
-    if request.method == "POST":
+    def get(self, request, *args, **kwargs):
+        recommended_reviews = get_recommended_reviews(request.user)
+        profile = request.user.profile
+        favorite_reviews = profile.favorite_reviews.all()
+        return render(request, self.template_name, {
+            "recommended_reviews": recommended_reviews,
+            "favorite_reviews": favorite_reviews,
+        })
+
+    def post(self, request, *args, **kwargs):
+        profile = request.user.profile
+        favorite_reviews = profile.favorite_reviews.all()
         data = request.POST
         review_id = data.get("review_id")
         if review_id:
@@ -34,13 +42,15 @@ def feed_view(request):
             else:
                 profile.favorite_reviews.add(review)
             profile.save()
-            #update list of favourite reviews
+            #update
             favorite_reviews = profile.favorite_reviews.all()
 
-    return render(request, 'feed.html', {
-        "recommended_reviews": recommended_reviews,
-        "favorite_reviews": favorite_reviews,
-    })
+        recommended_reviews = get_recommended_reviews(request.user)
+        return render(request, self.template_name, {
+            "recommended_reviews": recommended_reviews,
+            "favorite_reviews": favorite_reviews,
+        })
+
 
 @login_required
 def account_view(request):
