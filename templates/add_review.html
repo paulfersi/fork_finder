@@ -150,10 +150,13 @@
                     const suggestedRestaurant = {
                         place_id: feature.id,
                         name: feature.text,
-                        address: feature.properties.address,
                         latitude: feature.center[1],
                         longitude: feature.center[0],
                     };
+
+                    if (feature.properties.address) {
+                        suggestedRestaurant.address = feature.properties.address;
+                    }
 
                     const suggestionItem = document.createElement('div');
                     suggestionItem.classList.add('list-group-item', 'list-group-item-action');

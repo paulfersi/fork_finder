@@ -13,6 +13,10 @@ The main view displays a feed with two tabs:
 
 Users can mark reviews as favorites and see them on their personal list, search for other users, and view restaurant locations on a map.
 
+## Screenshots
+
+
+
 ## How to use it 
 
 1 Clone the repo with 

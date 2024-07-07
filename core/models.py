@@ -11,7 +11,7 @@ def create_profile(sender, instance, created, **kwargs):
         if instance.profile != user_profile:
             user_profile.follows.add(instance.profile)
             user_profile.save()
-            
+
 class Profile(models.Model):
     USER_TYPE_CHOICES = (
         ('regular', 'Regular User'),
@@ -38,7 +38,7 @@ class Profile(models.Model):
 class Restaurant(models.Model):
     place_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=60)
-    address = models.CharField(max_length=120)
+    address = models.CharField(max_length=120,blank=True,null=True)
     longitude = models.CharField(max_length=255)
     latitude = models.CharField(max_length=255)
 

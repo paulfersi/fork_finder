@@ -115,10 +115,11 @@ class AddReviewView(View):
             selected_place = json.loads(request.POST.get('selected_place', '{}'))
             place_id = selected_place.get('place_id')
             name = selected_place.get('name')
-            address = selected_place.get('address')
+            address = selected_place.get('address', None)  # Set address to None if not provided
             latitude = selected_place.get('latitude')
             longitude = selected_place.get('longitude')
 
+            # Ensure address is passed as None if not provided
             restaurant, created = Restaurant.objects.get_or_create(
                 place_id=place_id,
                 defaults={
@@ -145,6 +146,10 @@ class AddReviewView(View):
             review.save()
 
             return redirect('feed')
+        
+        # If form is not valid, render the form again with errors
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
         # If form is not valid, render the form again with errors
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
