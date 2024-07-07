@@ -7,6 +7,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         
+        <p>Global Rating:</p>
         <div class="form-group">
             <div class="star-rating">
                 <input type="radio" id="star5" name="rating" value="5" {% if form.instance.rating == 5 %}checked{% endif %}><label for="star5" title="5 stars">&#9733;</label>

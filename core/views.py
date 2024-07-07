@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
-from .forms import ReviewForm
+from .forms import ReviewForm,CriticReviewForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
@@ -94,16 +94,23 @@ def search_user_view(request):
             return render(request, 'user_not_found.html', {'query': query})
     return redirect('feed')
 
-
 @method_decorator(login_required, name='dispatch')
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
-        form = ReviewForm()
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm()
+        else:
+            form = ReviewForm()
+        
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
-        form = ReviewForm(request.POST, request.FILES)
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm(request.POST, request.FILES)
+        else:
+            form = ReviewForm(request.POST, request.FILES)
+
         if form.is_valid():
             selected_place = json.loads(request.POST.get('selected_place', '{}'))
             place_id = selected_place.get('place_id')
@@ -129,33 +136,40 @@ class AddReviewView(View):
             # Check if the user has permission to mark a review as featured
             if request.user.profile.is_culinary_critic:
                 review.is_featured = True
-                review.taste_rating = form.cleaned_data['taste_rating']
-                review.presentation_rating = form.cleaned_data['presentation_rating']
-                review.service_rating = form.cleaned_data['service_rating']
+                review.taste_rating = form.cleaned_data.get('taste_rating')
+                review.presentation_rating = form.cleaned_data.get('presentation_rating')
+                review.service_rating = form.cleaned_data.get('service_rating')
             else:
                 review.is_featured = False
-            
+
             review.save()
 
-            return redirect('feed')  
+            return redirect('feed')
 
-        
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
+        # If form is not valid, render the form again with errors
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
     
 @login_required
 def edit_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
     
     if request.method == 'POST':
-        form = ReviewForm(request.POST, request.FILES, instance=review)
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm(request.POST, request.FILES, instance=review)
+        else:
+            form = ReviewForm(request.POST, request.FILES, instance=review)
+        
         if form.is_valid():
             form.save()
             return redirect('profile', pk=request.user.pk)
     else:
-        form = ReviewForm(instance=review)
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm(instance=review)
+        else:
+            form = ReviewForm(instance=review)
     
     return render(request, 'edit_review.html', {'form': form, 'review': review})
-
 @login_required
 def delete_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
