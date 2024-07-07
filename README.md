@@ -19,7 +19,7 @@ The app also enables logging in as a culinary critic to provide more detailed re
 
 
 <p align="center">
-  <img src="/docs/screenshots/feed.png" width="300">
+  <img src="/docs/screenshots/feed.png" width="700">
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@ The app also enables logging in as a culinary critic to provide more detailed re
 </p>
 
 <p align="center">
-  <img src="/docs/screenshots/my_account.png" width="300">
+  <img src="/docs/screenshots/my_account.png" width="700">
 </p>
 
 
