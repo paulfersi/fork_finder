@@ -39,7 +39,7 @@ class Command(BaseCommand):
             user5.set_password('password5')
             user5.save()
 
-        admin_profile, created_admin_profile = Profile.objects.get_or_create(user=admin_user, defaults={'user_type': 'admin', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
+        admin_profile, created_admin_profile = Profile.objects.get_or_create(user=admin_user, defaults={'user_type': 'critic', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
         if created_admin_profile:
             admin_profile.save()
 

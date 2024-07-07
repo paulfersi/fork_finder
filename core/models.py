@@ -16,7 +16,6 @@ class Profile(models.Model):
     USER_TYPE_CHOICES = (
         ('regular', 'Regular User'),
         ('critic', 'Culinary Critic'),
-        ('admin', 'Admin'),
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, default='regular')
