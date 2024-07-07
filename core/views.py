@@ -175,6 +175,7 @@ def edit_review(request, pk):
             form = ReviewForm(instance=review)
     
     return render(request, 'edit_review.html', {'form': form, 'review': review})
+
 @login_required
 def delete_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
