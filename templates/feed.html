@@ -56,7 +56,9 @@
         </div>
         
         <div class="tab-pane fade" id="explore" role="tabpanel" aria-labelledby="explore-tab">
+            <p>Recommended reviews based on your location <a href="{% url 'get_location' %}" class="btn btn-outline-primary"> Change Location</a></p>
             <div class="card-columns">
+    
                 {% for review in recommended_reviews %}
                     <div class="card mb-3 {% if review.is_featured %}border-primary{% endif %}">
                         <div class="card-header">
@@ -90,7 +92,7 @@
                                     {% endif %}
                                 </button>
                             </form>
-                            
+                            <a href="{% url 'view_on_map' review.restaurant.id %}" class="btn btn-link">View on Map</a>
                         </div>
                     </div>
                 {% endfor %}

@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Enter Your Location</h2>
-<p>We need your location to provide better recommendations. Please allow access to your location.</p>
-<button id="open-location-modal-btn" class="btn btn-primary">Enter Location</button>
 
-<!-- Location Modal -->
-<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -20,7 +16,7 @@
                 <button id="get-location-btn" class="btn btn-primary">Get Location</button>
                 <button id="refuse-location-btn" class="btn btn-secondary">Refuse</button>
 
-                <form id="location-form" method="post" style="display: none;">
+                <form id="location-form" action="{% url 'get_location' %}" method="post" style="display: none;">
                     {% csrf_token %}
                     <input type="hidden" id="latitude" name="latitude">
                     <input type="hidden" id="longitude" name="longitude">
@@ -32,12 +28,16 @@
 </div>
 
 <script>
-    // Show the modal when the page is loaded (optional)
     $(document).ready(function() {
         $('#locationModal').modal('show');
+        
+        // Handle modal close event
+        $('#locationModal').on('hidden.bs.modal', function () {
+            window.location.href = "{% url 'feed' %}";
+        });
     });
 
-    // Handle gt location
+    // handle getting location
     document.getElementById('get-location-btn').onclick = function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -45,6 +45,7 @@
                 document.getElementById('longitude').value = position.coords.longitude;
                 document.getElementById('location-form').style.display = 'block';
                 $('#locationModal').modal('hide'); // Hide modal after getting location
+                document.getElementById('location-form').submit(); // Submit the form
             }, function(error) {
                 alert('Error getting location: ' + error.message);
             });
@@ -53,12 +54,14 @@
         }
     };
 
-    // Handle refusing location
+    // handle refusing location
     document.getElementById('refuse-location-btn').onclick = function() {
-        document.getElementById('latitude').value = 44.647129; // Default latitude
-        document.getElementById('longitude').value = 10.925227; // Default longitude
+        document.getElementById('latitude').value = 44.647129; // Default latitude (Modena)
+        document.getElementById('longitude').value = 10.925227; // Default longitude (Modena)
         document.getElementById('location-form').style.display = 'block';
         $('#locationModal').modal('hide'); // Hide modal after setting default location
+        document.getElementById('location-form').submit(); // Submit the form
     };
 </script>
+
 {% endblock %}
