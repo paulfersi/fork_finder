@@ -44,7 +44,7 @@ class Restaurant(models.Model):
     latitude = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.name} {self.location}"
+        return f"{self.name} | {self.address}"
 
 class Review(models.Model):
     user = models.ForeignKey(User, related_name="reviews", on_delete=models.CASCADE)
@@ -62,6 +62,12 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} {self.restaurant.name} ({self.created_at:%Y-%m-%d %H:%M}): "
-
+        return f"{self.user} | {self.restaurant.name} ({self.created_at:%Y-%m-%d %H:%M}) "
+    
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            if not self.user.profile.is_culinary_critic():
+                raise ValueError("Only culinary critics can write featured reviews")
+        
+        super().save(*args, **kwargs)
 

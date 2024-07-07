@@ -13,6 +13,8 @@ class UserAdmin(admin.ModelAdmin):
     fields = ["username", "password"]
     inlines = [ProfileInline]   #modify them in the same place
 
+
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
