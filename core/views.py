@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm,CriticReviewForm
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView
 from django.views import View
 from django.urls import reverse_lazy

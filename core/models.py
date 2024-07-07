@@ -11,7 +11,7 @@ def create_profile(sender, instance, created, **kwargs):
         if instance.profile != user_profile:
             user_profile.follows.add(instance.profile)
             user_profile.save()
-
+            
 class Profile(models.Model):
     USER_TYPE_CHOICES = (
         ('regular', 'Regular User'),
