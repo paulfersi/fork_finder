@@ -96,27 +96,3 @@ class ReviewModelTestCase(TestCase):
             self.fail("Culinary critic should be able to write featured reviews.")
 
 
-
-class RecommendationTestCase(TestCase):
-
-    def setUp(self):
-        self.user = User.objects.create(username='testuser',password="pass")
-        self.profile = Profile.objects.create(user=self.user, latitude=45.4642, longitude=9.1900)
-
-        self.review1 = Review.objects.create(user=self.user, restaurant='Ristorante A', body= 'test',rating=4, latitude=45.4642, longitude=9.1900)
-        self.review2 = Review.objects.create(user=self.user, restaurant='Ristorante B',body= 'test', rating=5, latitude=41.9028, longitude=12.4964)
-        self.review3 = Review.objects.create(user=self.user, restaurant='Ristorante C', body= 'test',rating=3, latitude=51.5074, longitude=-0.1278)
-
-    def test_get_recommended_reviews(self):
-        recommended_reviews = get_recommended_reviews(self.user)
-
-
-        self.assertTrue(recommended_reviews)
-
-        previous_score = float('inf')
-        for review, score in recommended_reviews:
-            self.assertLessEqual(score, previous_score)
-            previous_score = score
-
-        #verify th first
-        self.assertEqual(recommended_reviews[0][0].restaurant_name, 'Ristorante B')

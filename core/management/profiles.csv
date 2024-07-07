@@ -1,9 +1,0 @@
-username,password,email,user_type,latitude,longitude
-user12,password12,user12@example.com,regular,40.4168,-3.7038  # Madrid
-user13,password13,user13@example.com,critic,40.4172,-3.7042   # Madrid
-user14,password14,user14@example.com,regular,48.8566,2.3522   # Paris
-user15,password15,user15@example.com,critic,48.8584,2.2945    # Paris
-user16,password16,user16@example.com,regular,44.6475,10.9254  # Modena
-user17,password17,user17@example.com,critic,44.6488,10.9215   # Modena
-user18,password18,user18@example.com,regular,52.5200,13.4050  # Berlin
-user19,password19,user19@example.com,critic,52.5233,13.4127   # Berlin
