@@ -9,6 +9,17 @@ class Command(BaseCommand):
     help = 'Populates the database with sample data'
 
     def handle(self, *args, **kwargs):
+        admin_username = 'admin'
+        admin_password = '1234'
+        admin_email = 'admin@example.com'
+
+        admin_user = User.objects.filter(username=admin_username).first()
+        if not admin_user:
+            admin_user = User.objects.create_superuser(admin_username, admin_email, admin_password)
+            self.stdout.write(self.style.SUCCESS('Superuser "{}" created successfully'.format(admin_username)))
+        else:
+            self.stdout.write(self.style.WARNING('Superuser "{}" already exists'.format(admin_username)))
+
         users_data = [
             {
                 'username': 'diego',
@@ -144,14 +155,14 @@ class Command(BaseCommand):
         ]
 
         reviews_data = [
-            {'body': 'Excellent food and service!', 'rating': 5, 'photo': 'review_photos/photo1.jpg', 'is_featured': True},
+            {'body': 'Excellent food and service!', 'rating': 5, 'photo': 'review_photos/photo1.jpg', 'is_featured': False},
             {'body': 'Decent place, good ambiance.', 'rating': 4, 'photo': 'review_photos/photo2.jpg', 'is_featured': False},
             {'body': 'The food was okay, service could be better.', 'rating': 3, 'photo': 'review_photos/photo3.jpg', 'is_featured': False},
-            {'body': 'Amazing experience, will visit again!', 'rating': 5, 'photo': 'review_photos/photo4.jpg', 'is_featured': True},
+            {'body': 'Amazing experience, will visit again!', 'rating': 5, 'photo': 'review_photos/photo4.jpg', 'is_featured': False},
             {'body': 'Disappointing, food quality was poor.', 'rating': 2, 'photo': 'review_photos/photo5.jpg', 'is_featured': False},
             {'body': 'Lovely place, great for special occasions.', 'rating': 4, 'photo': 'review_photos/photo6.jpg', 'is_featured': False},
             {'body': 'Average food, nothing exceptional.', 'rating': 3, 'photo': 'review_photos/photo7.jpg', 'is_featured': False},
-            {'body': 'Best restaurant in town, highly recommended!', 'rating': 5, 'photo': 'review_photos/photo8.jpg', 'is_featured': True},
+            {'body': 'Best restaurant in town, highly recommended!', 'rating': 5, 'photo': 'review_photos/photo8.jpg', 'is_featured': False},
             {'body': 'Overpriced for the quality offered.', 'rating': 2, 'photo': 'review_photos/photo9.jpg', 'is_featured': False},
         ]
 
