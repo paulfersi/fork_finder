@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends 'registration/base_login.html' %}
+
+{% block title %}Welcome to Fork Finder{% endblock %}
 
 {% block content %}
 <h2>Welcome to Fork Finder</h2>
@@ -22,10 +24,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    div {
-    text-align: center;
-    }
-</style>
 {% endblock %}

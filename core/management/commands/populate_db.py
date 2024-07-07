@@ -1,55 +1,111 @@
-import csv
-import random
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from faker import Faker
 from core.models import Profile, Restaurant, Review
+from django.utils import timezone
+from decimal import Decimal
 
 class Command(BaseCommand):
-    help = 'Populate the database with sample data'
+    help = 'Populates the database with sample data'
 
     def handle(self, *args, **kwargs):
-        fake = Faker()
+        admin_user = User.objects.filter(username='admin').first()
+        if not admin_user:
+            admin_user = User.objects.create_superuser('admin', 'admin@example.com', '1234')
+            self.stdout.write(self.style.SUCCESS('Superuser "admin" created successfully'))
 
-        Profile.objects.all().delete()
-        User.objects.all().delete()
-        Restaurant.objects.all().delete()
-        Review.objects.all().delete()
 
-        # Create users with random profiles
-        users = []
-        for i in range(5):
-            username = fake.user_name()
-            email = fake.email()
-            password = "password"
-            user = User.objects.create_user(username=username, email=email, password=password)
-            user.profile.save()
-            users.append(user)
+        user1, created1 = User.objects.get_or_create(username='critic1')
+        if created1:
+            user1.set_password('password1')
+            user1.save()
 
-        # Read restaurants from CSV and create them
-        with open('restaurants.csv', 'r') as file:
-            reader = csv.DictReader(file)
-            restaurants = []
-            for row in reader:
-                restaurant = Restaurant.objects.create(
-                    place_id=row['place_id'],
-                    name=row['name'],
-                    location=row['location']
-                )
-                restaurants.append(restaurant)
+        user2, created2 = User.objects.get_or_create(username='user2')
+        if created2:
+            user2.set_password('password2')
+            user2.save()
 
-        # Create reviews with random content
-        for user in users:
-            for restaurant in restaurants:
-                body = "Lorem ipsum dolor sit amet, consectetur adipisci elit,\
-                        sed do eiusmod tempor incidunt ut labore et dolore magna aliqua."
-                rating = random.randint(1, 5)
-                review = Review.objects.create(user=user, restaurant=restaurant, body=body, rating=rating, photo=None)
+        user3, created3 = User.objects.get_or_create(username='user3')
+        if created3:
+            user3.set_password('password3')
+            user3.save()
 
-        # Link users to follow each other (simple example: each user follows the next one)
-        for i, user in enumerate(users):
-            profile = user.profile
-            profile.follows.add(users[(i+1) % len(users)].profile)
-            profile.save()
+        user4, created4 = User.objects.get_or_create(username='user4')
+        if created4:
+            user4.set_password('password4')
+            user4.save()
 
-        self.stdout.write(self.style.SUCCESS("Database populated successfully!"))
+        user5, created5 = User.objects.get_or_create(username='user5')
+        if created5:
+            user5.set_password('password5')
+            user5.save()
+
+        admin_profile, created_admin_profile = Profile.objects.get_or_create(user=admin_user, defaults={'user_type': 'admin', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
+        if created_admin_profile:
+            admin_profile.save()
+
+        profile1, created_profile1 = Profile.objects.get_or_create(user=user1, defaults={'user_type': 'regular', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
+        if created_profile1:
+            profile1.save()
+
+        profile2, created_profile2 = Profile.objects.get_or_create(user=user2, defaults={'user_type': 'critic', 'latitude': Decimal('34.052235'), 'longitude': Decimal('-118.243683')})
+        if created_profile2:
+            profile2.save()
+
+        profile3, created_profile3 = Profile.objects.get_or_create(user=user3, defaults={'user_type': 'regular', 'latitude': Decimal('51.5074'), 'longitude': Decimal('-0.1278')})
+        if created_profile3:
+            profile3.save()
+
+        profile4, created_profile4 = Profile.objects.get_or_create(user=user4, defaults={'user_type': 'critic', 'latitude': Decimal('48.8566'), 'longitude': Decimal('2.3522')})
+        if created_profile4:
+            profile4.save()
+
+        profile5, created_profile5 = Profile.objects.get_or_create(user=user5, defaults={'user_type': 'regular', 'latitude': Decimal('37.7749'), 'longitude': Decimal('-122.4194')})
+        if created_profile5:
+            profile5.save()
+
+        # Add follows relationships
+
+        admin_profile.follows.add(profile1,profile2,profile3,profile4,profile5)
+        admin_profile.save()
+
+        profile1.follows.add(profile2, profile3, profile4)
+        profile1.save()
+
+        profile2.follows.add(profile1, profile4)
+        profile2.save()
+
+        profile3.follows.add(profile1, profile5)
+        profile3.save()
+
+        profile4.follows.add(profile2)
+        profile4.save()
+
+        profile5.follows.add(profile3, profile4)
+        profile5.save()
+
+        restaurant1, created_restaurant1 = Restaurant.objects.get_or_create(place_id='place_id1', defaults={'name': 'Restaurant A', 'address': '123 Main St', 'latitude': '40.712776', 'longitude': '-74.005974'})
+        if created_restaurant1:
+            restaurant1.save()
+
+        restaurant2, created_restaurant2 = Restaurant.objects.get_or_create(place_id='place_id2', defaults={'name': 'Restaurant B', 'address': '456 Elm St', 'latitude': '34.052235', 'longitude': '-118.243683'})
+        if created_restaurant2:
+            restaurant2.save()
+
+        restaurant3, created_restaurant3 = Restaurant.objects.get_or_create(place_id='place_id3', defaults={'name': 'Restaurant C', 'address': '789 Oak Ave', 'latitude': '51.5074', 'longitude': '-0.1278'})
+        if created_restaurant3:
+            restaurant3.save()
+
+        # Create Reviews
+        review1, created_review1 = Review.objects.get_or_create(user=user1, restaurant=restaurant1, defaults={'body': 'Great food!', 'rating': 5, 'photo': 'review_photos/photo1.jpg', 'is_featured': True, 'created_at': timezone.now()})
+        if created_review1:
+            review1.save()
+
+        review2, created_review2 = Review.objects.get_or_create(user=user2, restaurant=restaurant2, defaults={'body': 'Average experience', 'rating': 3, 'photo': 'review_photos/photo2.jpg', 'created_at': timezone.now()})
+        if created_review2:
+            review2.save()
+
+        review3, created_review3 = Review.objects.get_or_create(user=user3, restaurant=restaurant3, defaults={'body': 'Delicious dishes', 'rating': 4, 'photo': 'review_photos/photo3.jpg', 'created_at': timezone.now()})
+        if created_review3:
+            review3.save()
+
+        self.stdout.write(self.style.SUCCESS('Database populated successfully!'))

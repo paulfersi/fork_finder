@@ -124,9 +124,9 @@ class AddReviewView(View):
 
             review.save()
 
-            return redirect('feed')  # Redirect to the feed page after successful review submission
+            return redirect('feed')  
 
-        # If form is invalid, re-render the form with errors
+        
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
     
 @login_required
