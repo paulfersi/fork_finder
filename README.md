@@ -18,6 +18,18 @@ The app also enables logging in as a culinary critic to provide more detailed re
 ## Screenshots
 
 
+<p align="center">
+  <img src="/docs/screenshots/feed.png" width="300">
+</p>
+
+<p align="center">
+  <img src="/docs/screenshots/add_critic_review.png" width="300">
+</p>
+
+<p align="center">
+  <img src="/docs/screenshots/my_account.png" width="300">
+</p>
+
 
 ## How to use it 
 
