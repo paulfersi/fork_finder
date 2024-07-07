@@ -4,9 +4,46 @@ This is my final project for the Web Technologies course.
 
 ## Introduction
 
-Fork Finder is a social network dedicated to restaurant's reviews.
+Fork Finder is a social network for sharing restaurant reviews with your friends.
+## Functionalities
 
-## Prerequisites
+The main view displays a feed with two tabs:
+- **"Friends' Advice"** tab where users can see reviews from users they follow.
+- **"Explore"** tab where users can see reviews recommended by the app.
+
+Users can mark reviews as favorites and see them on their personal list, search for other users, and view restaurant locations on a map.
+
+## How to use it 
+
+1 Clone the repo with 
+```bash
+git clone https://github.com/paulfersi/fork_finder.git
+
+```
+
+2. Make sure **pipenv** is installed.
+   
+   In the project folder execute:
+
+```bash
+   pipenv install
+   pipenv shell  
+```
+
+3. Populate the database with the command:
+   
+```bash
+python manage.py populate_db
+```
+
+4. Run the server ad connect to the localhost address:
+   
+```bash
+python manage.py runserver
+```    
+
+Now you can login with the username "admin" and the password "1234".
+To access the admin section offered by django go to the url "admin/"
 
 #### Mapbox
 
@@ -20,21 +57,12 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 
 ```
 
+## Technologies Used
 
-## Functionalities
-
-The main view displays the feed with two tabs. A **"Friends' Advices"** tab where they can see reviews from users they follow and an **"Explore"** tab where they can see reviews recommended by the app.
-
-Users can mark the review as "favourite"
-
-## Tecnologies used
-
-- python
+- Python
 - Django framework
-- Bootstrap 
-- Javascript 
-- Mapbox (for the geocoding and the maps renderings)
-- 
+- Bootstrap
+- JavaScript
+- Mapbox (for geocoding and map rendering)
 
-
-Docs for geocoding api: https://docs.mapbox.com/api/search/geocoding-v5/ 
+For documentation on the geocoding API, visit https://docs.mapbox.com/api/search/geocoding-v5/.

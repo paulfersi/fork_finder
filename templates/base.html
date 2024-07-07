@@ -31,13 +31,6 @@
             }
         }
 
-        .scrollable-container {
-            height: 80vh;
-            overflow-y: auto;
-        }
-
-
-
         .star-rating {
             display: flex;
             flex-direction: row-reverse;
@@ -78,12 +71,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' request.user.profile.pk %}">My Account</a>
                 </li>
-                                <li class="nav-item">
-                    {% if user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    {% endif %}
+                <li class="nav-item">
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">Change Account</a>
+                    </div>
                 </li>
                 <li>
                     <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'search_user' %}">
