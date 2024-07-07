@@ -13,6 +13,8 @@ The main view displays a feed with two tabs:
 
 Users can mark reviews as favorites and see them on their personal list, search for other users, and view restaurant locations on a map.
 
+The app also enables logging in as a culinary critic to provide more detailed reviews with a 'verified' tag.
+
 ## Screenshots
 
 
@@ -68,5 +70,6 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 - Bootstrap
 - JavaScript
 - Mapbox (for geocoding and map rendering)
+- jQuery
 
 For documentation on the geocoding API, visit https://docs.mapbox.com/api/search/geocoding-v5/.
