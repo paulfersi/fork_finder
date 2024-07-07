@@ -43,11 +43,11 @@ class Command(BaseCommand):
         if created_admin_profile:
             admin_profile.save()
 
-        profile1, created_profile1 = Profile.objects.get_or_create(user=user1, defaults={'user_type': 'regular', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
+        profile1, created_profile1 = Profile.objects.get_or_create(user=user1, defaults={'user_type': 'critic', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
         if created_profile1:
             profile1.save()
 
-        profile2, created_profile2 = Profile.objects.get_or_create(user=user2, defaults={'user_type': 'critic', 'latitude': Decimal('34.052235'), 'longitude': Decimal('-118.243683')})
+        profile2, created_profile2 = Profile.objects.get_or_create(user=user2, defaults={'user_type': 'regular', 'latitude': Decimal('34.052235'), 'longitude': Decimal('-118.243683')})
         if created_profile2:
             profile2.save()
 
