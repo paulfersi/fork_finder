@@ -13,19 +13,21 @@ The main view displays a feed with two tabs:
 
 Users can mark reviews as favorites and see them on their personal list, search for other users, and view restaurant locations on a map.
 
-The app also enables logging in as a culinary critic to provide more detailed reviews with a 'verified' tag.
+The app also enables logging in as a culinary critic to provide more detailed reviews with a 'verified' tag.2
 
 ## Screenshots
 
-
+Feed:
 <p align="center">
   <img src="/docs/screenshots/feed.png">
 </p>
 
+My Account page:
 <p align="center">
   <img src="/docs/screenshots/my_account.png">
 </p>
 
+Add review for culinary critics:
 <p >
   <img src="/docs/screenshots/add_critic_review.png" width="300">
 </p>

@@ -26,6 +26,10 @@ def get_recommended_reviews(user):
     recommended_reviews = []
 
     for review in reviews:
+
+        if review.rating < 3:
+            continue
+
         restaurant = review.restaurant
         reviewer_profile = review.user.profile
 
@@ -36,7 +40,7 @@ def get_recommended_reviews(user):
         followers_count = reviewer_profile.followed_by.count()
         
         #  scoring function
-        score = (followers_count) * (6-review.rating) / (distance + 1)
+        score = (followers_count) * (review.rating) / (distance + 1)
         
         recommended_reviews.append((review, score))
 
