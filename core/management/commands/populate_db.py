@@ -1,111 +1,206 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from core.models import Profile, Restaurant, Review
-from django.utils import timezone
 from decimal import Decimal
+from django.utils import timezone
+import random
 
 class Command(BaseCommand):
     help = 'Populates the database with sample data'
 
     def handle(self, *args, **kwargs):
-        admin_user = User.objects.filter(username='admin').first()
-        if not admin_user:
-            admin_user = User.objects.create_superuser('admin', 'admin@example.com', '1234')
-            self.stdout.write(self.style.SUCCESS('Superuser "admin" created successfully'))
+        users_data = [
+            {
+                'username': 'diego',
+                'password': 'diegopass',
+                'email': 'diego@example.com',
+                'user_type': 'regular',
+                'city': 'Madrid',
+                'latitude': Decimal('40.4168'),
+                'longitude': Decimal('-3.7038')
+            },
+            {
+                'username': 'elena',
+                'password': 'elenapass',
+                'email': 'elena@example.com',
+                'user_type': 'critic',
+                'city': 'Madrid',
+                'latitude': Decimal('40.4172'),
+                'longitude': Decimal('-3.7042')
+            },
+            {
+                'username': 'pierre',
+                'password': 'pierrepass',
+                'email': 'pierre@example.com',
+                'user_type': 'regular',
+                'city': 'Paris',
+                'latitude': Decimal('48.8566'),
+                'longitude': Decimal('2.3522')
+            },
+            {
+                'username': 'sophie',
+                'password': 'sophiepass',
+                'email': 'sophie@example.com',
+                'user_type': 'critic',
+                'city': 'Paris',
+                'latitude': Decimal('48.8584'),
+                'longitude': Decimal('2.2945')
+            },
+            {
+                'username': 'giuseppe',
+                'password': 'giuseppepass',
+                'email': 'giuseppe@example.com',
+                'user_type': 'regular',
+                'city': 'Modena',
+                'latitude': Decimal('44.6475'),
+                'longitude': Decimal('10.9254')
+            },
+            {
+                'username': 'anna',
+                'password': 'annapass',
+                'email': 'anna@example.com',
+                'user_type': 'critic',
+                'city': 'Modena',
+                'latitude': Decimal('44.6488'),
+                'longitude': Decimal('10.9215')
+            },
+            {
+                'username': 'maximilian',
+                'password': 'maximilianpass',
+                'email': 'maximilian@example.com',
+                'user_type': 'regular',
+                'city': 'Berlin',
+                'latitude': Decimal('52.5200'),
+                'longitude': Decimal('13.4050')
+            },
+            {
+                'username': 'sophia',
+                'password': 'sophiapass',
+                'email': 'sophia@example.com',
+                'user_type': 'critic',
+                'city': 'Berlin',
+                'latitude': Decimal('52.5233'),
+                'longitude': Decimal('13.4127')
+            },
+        ]
 
+        restaurants_data = [
+            {
+                'place_id': 'place_id4',
+                'name': 'Osteria Francescana',
+                'address': '12 Modena St',
+                'latitude': Decimal('44.644'),
+                'longitude': Decimal('10.9254')
+            },
+            {
+                'place_id': 'place_id5',
+                'name': 'Trattoria Aldina',
+                'address': '23 Via Giuseppe Mazzini',
+                'latitude': Decimal('44.6478'),
+                'longitude': Decimal('10.9265')
+            },
+            {
+                'place_id': 'place_id6',
+                'name': 'Le Grand Véfour',
+                'address': '17 Rue de Beaujolais',
+                'latitude': Decimal('48.8658'),
+                'longitude': Decimal('2.337')
+            },
+            {
+                'place_id': 'place_id7',
+                'name': 'L\'Astrance',
+                'address': '4 Rue Beethoven',
+                'latitude': Decimal('48.8587'),
+                'longitude': Decimal('2.2909')
+            },
+            {
+                'place_id': 'place_id8',
+                'name': 'Rutz',
+                'address': 'Chausseestraße 8',
+                'latitude': Decimal('52.5311'),
+                'longitude': Decimal('13.3841')
+            },
+            {
+                'place_id': 'place_id9',
+                'name': 'Pauly Saal',
+                'address': 'Auguststraße 11-13',
+                'latitude': Decimal('52.5287'),
+                'longitude': Decimal('13.4022')
+            },
+            {
+                'place_id': 'place_id10',
+                'name': 'Sobrino de Botín',
+                'address': 'Calle de Cuchilleros 17',
+                'latitude': Decimal('40.4144'),
+                'longitude': Decimal('-3.708')
+            },
+            {
+                'place_id': 'place_id11',
+                'name': 'Casa Lucio',
+                'address': 'Calle Cava Baja 35',
+                'latitude': Decimal('40.4125'),
+                'longitude': Decimal('-3.7071')
+            },
+        ]
 
-        user1, created1 = User.objects.get_or_create(username='critic1')
-        if created1:
-            user1.set_password('password1')
-            user1.save()
+        reviews_data = [
+            {'body': 'Excellent food and service!', 'rating': 5, 'photo': 'review_photos/photo1.jpg', 'is_featured': True},
+            {'body': 'Decent place, good ambiance.', 'rating': 4, 'photo': 'review_photos/photo2.jpg', 'is_featured': False},
+            {'body': 'The food was okay, service could be better.', 'rating': 3, 'photo': 'review_photos/photo3.jpg', 'is_featured': False},
+            {'body': 'Amazing experience, will visit again!', 'rating': 5, 'photo': 'review_photos/photo4.jpg', 'is_featured': True},
+            {'body': 'Disappointing, food quality was poor.', 'rating': 2, 'photo': 'review_photos/photo5.jpg', 'is_featured': False},
+            {'body': 'Lovely place, great for special occasions.', 'rating': 4, 'photo': 'review_photos/photo6.jpg', 'is_featured': False},
+            {'body': 'Average food, nothing exceptional.', 'rating': 3, 'photo': 'review_photos/photo7.jpg', 'is_featured': False},
+            {'body': 'Best restaurant in town, highly recommended!', 'rating': 5, 'photo': 'review_photos/photo8.jpg', 'is_featured': True},
+            {'body': 'Overpriced for the quality offered.', 'rating': 2, 'photo': 'review_photos/photo9.jpg', 'is_featured': False},
+        ]
 
-        user2, created2 = User.objects.get_or_create(username='user2')
-        if created2:
-            user2.set_password('password2')
-            user2.save()
+        # Populate users and profiles
+        for user_data in users_data:
+            username = user_data['username']
+            email = user_data['email']
+            password = user_data['password']
+            user_type = user_data['user_type']
+            city = user_data['city']
+            latitude = user_data['latitude']
+            longitude = user_data['longitude']
 
-        user3, created3 = User.objects.get_or_create(username='user3')
-        if created3:
-            user3.set_password('password3')
-            user3.save()
+            user, created = User.objects.get_or_create(username=username, email=email)
+            if created:
+                user.set_password(password)
+                user.save()
 
-        user4, created4 = User.objects.get_or_create(username='user4')
-        if created4:
-            user4.set_password('password4')
-            user4.save()
+            # Use username as profile name
+            profile, created = Profile.objects.get_or_create(user=user, defaults={'user_type': user_type, 'latitude': latitude, 'longitude': longitude, 'name': username})
+            if created:
+                profile.save()
 
-        user5, created5 = User.objects.get_or_create(username='user5')
-        if created5:
-            user5.set_password('password5')
-            user5.save()
+        # Populate restaurants
+        for restaurant_data in restaurants_data:
+            place_id = restaurant_data['place_id']
+            name = restaurant_data['name']
+            address = restaurant_data['address']
+            latitude = restaurant_data['latitude']
+            longitude = restaurant_data['longitude']
 
-        admin_profile, created_admin_profile = Profile.objects.get_or_create(user=admin_user, defaults={'user_type': 'critic', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
-        if created_admin_profile:
-            admin_profile.save()
+            restaurant, created = Restaurant.objects.get_or_create(place_id=place_id, defaults={'name': name, 'address': address, 'latitude': latitude, 'longitude': longitude})
+            if created:
+                restaurant.save()
 
-        profile1, created_profile1 = Profile.objects.get_or_create(user=user1, defaults={'user_type': 'critic', 'latitude': Decimal('40.712776'), 'longitude': Decimal('-74.005974')})
-        if created_profile1:
-            profile1.save()
+        # Create reviews
+        for user_data in users_data:
+            user = User.objects.get(username=user_data['username'])
+            random_restaurant = random.choice(restaurants_data)
+            restaurant = Restaurant.objects.get(place_id=random_restaurant['place_id'])
+            random_review = random.choice(reviews_data)
 
-        profile2, created_profile2 = Profile.objects.get_or_create(user=user2, defaults={'user_type': 'regular', 'latitude': Decimal('34.052235'), 'longitude': Decimal('-118.243683')})
-        if created_profile2:
-            profile2.save()
+            review_body = random_review['body']
+            review_rating = random_review['rating']
+            review_photo = random_review['photo'] if 'photo' in random_review else None
+            review_is_featured = random_review['is_featured']
 
-        profile3, created_profile3 = Profile.objects.get_or_create(user=user3, defaults={'user_type': 'regular', 'latitude': Decimal('51.5074'), 'longitude': Decimal('-0.1278')})
-        if created_profile3:
-            profile3.save()
+            review, created = Review.objects.get_or_create(user=user, restaurant=restaurant, defaults={'body': review_body, 'rating': review_rating, 'photo': review_photo, 'is_featured': review_is_featured, 'created_at': timezone.now()})
+            if created:
+                review.save()
 
-        profile4, created_profile4 = Profile.objects.get_or_create(user=user4, defaults={'user_type': 'critic', 'latitude': Decimal('48.8566'), 'longitude': Decimal('2.3522')})
-        if created_profile4:
-            profile4.save()
-
-        profile5, created_profile5 = Profile.objects.get_or_create(user=user5, defaults={'user_type': 'regular', 'latitude': Decimal('37.7749'), 'longitude': Decimal('-122.4194')})
-        if created_profile5:
-            profile5.save()
-
-        # Add follows relationships
-
-        admin_profile.follows.add(profile1,profile2,profile3,profile4,profile5)
-        admin_profile.save()
-
-        profile1.follows.add(profile2, profile3, profile4)
-        profile1.save()
-
-        profile2.follows.add(profile1, profile4)
-        profile2.save()
-
-        profile3.follows.add(profile1, profile5)
-        profile3.save()
-
-        profile4.follows.add(profile2)
-        profile4.save()
-
-        profile5.follows.add(profile3, profile4)
-        profile5.save()
-
-        restaurant1, created_restaurant1 = Restaurant.objects.get_or_create(place_id='place_id1', defaults={'name': 'Restaurant A', 'address': '123 Main St', 'latitude': '40.712776', 'longitude': '-74.005974'})
-        if created_restaurant1:
-            restaurant1.save()
-
-        restaurant2, created_restaurant2 = Restaurant.objects.get_or_create(place_id='place_id2', defaults={'name': 'Restaurant B', 'address': '456 Elm St', 'latitude': '34.052235', 'longitude': '-118.243683'})
-        if created_restaurant2:
-            restaurant2.save()
-
-        restaurant3, created_restaurant3 = Restaurant.objects.get_or_create(place_id='place_id3', defaults={'name': 'Restaurant C', 'address': '789 Oak Ave', 'latitude': '51.5074', 'longitude': '-0.1278'})
-        if created_restaurant3:
-            restaurant3.save()
-
-        # Create Reviews
-        review1, created_review1 = Review.objects.get_or_create(user=user1, restaurant=restaurant1, defaults={'body': 'Great food!', 'rating': 5, 'photo': 'review_photos/photo1.jpg', 'is_featured': True, 'created_at': timezone.now()})
-        if created_review1:
-            review1.save()
-
-        review2, created_review2 = Review.objects.get_or_create(user=user2, restaurant=restaurant2, defaults={'body': 'Average experience', 'rating': 3, 'photo': 'review_photos/photo2.jpg', 'created_at': timezone.now()})
-        if created_review2:
-            review2.save()
-
-        review3, created_review3 = Review.objects.get_or_create(user=user3, restaurant=restaurant3, defaults={'body': 'Delicious dishes', 'rating': 4, 'photo': 'review_photos/photo3.jpg', 'created_at': timezone.now()})
-        if created_review3:
-            review3.save()
-
-        self.stdout.write(self.style.SUCCESS('Database populated successfully!'))
+        self.stdout.write(self.style.SUCCESS('Database populated successfully with reviews!'))
