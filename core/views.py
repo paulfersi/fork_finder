@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
+@method_decorator(login_required, name='dispatch')
 class FeedView(View):
     template_name = 'feed.html'
 

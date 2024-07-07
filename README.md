@@ -2,6 +2,9 @@
 
 This is my final project for the Web Technologies course.
 
+## Intro
+
+Fork Finder is a social network dedicated to restaurant's reviews.
 
 ## Prerequisites
 
@@ -16,5 +19,9 @@ This is my final project for the Web Technologies course.
 MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 
 ```
+
+## Tecnologies used
+
+The entire project was built using the Django Framework for Python. 
 
 Docs for geocoding api: https://docs.mapbox.com/api/search/geocoding-v5/ 
