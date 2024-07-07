@@ -51,14 +51,17 @@ class Review(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     body = models.CharField(max_length=255)
     rating = models.PositiveSmallIntegerField()
+
+    # specific to culinary critics
+    taste_rating = models.PositiveSmallIntegerField(blank=True, null=True)
+    presentation_rating = models.PositiveSmallIntegerField(blank=True, null=True)
+    service_rating = models.PositiveSmallIntegerField(blank=True, null=True)
+
     photo = models.ImageField(upload_to='media/review_photos/')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        permissions = [
-            ("mark_featured_review", "Can mark a review as featured"),
-        ]
-
     def __str__(self):
         return f"{self.user} {self.restaurant.name} ({self.created_at:%Y-%m-%d %H:%M}): "
+
+

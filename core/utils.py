@@ -36,7 +36,7 @@ def get_recommended_reviews(user):
         followers_count = reviewer_profile.followed_by.count()
         
         #  scoring function
-        score = followers_count / (distance+1)
+        score = followers_count / (distance+1) * (review.rating + 1)
         
         recommended_reviews.append((review, score))
 

@@ -55,7 +55,6 @@ class FeedView(View):
 
 @login_required
 def account_view(request):
-    # logic to get account data
     return render(request, 'account.html')
 
 def landing_page_view(request):
@@ -128,11 +127,14 @@ class AddReviewView(View):
             review.restaurant = restaurant
 
             # Check if the user has permission to mark a review as featured
-            if request.user.has_perm('core.mark_featured_review'):
+            if request.user.profile.is_culinary_critic:
                 review.is_featured = True
+                review.taste_rating = form.cleaned_data['taste_rating']
+                review.presentation_rating = form.cleaned_data['presentation_rating']
+                review.service_rating = form.cleaned_data['service_rating']
             else:
                 review.is_featured = False
-
+            
             review.save()
 
             return redirect('feed')  
