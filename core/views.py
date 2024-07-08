@@ -13,7 +13,7 @@ from .utils import get_recommended_reviews
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
-from braces.views import GroupRequiredMixin
+from braces.views import PermissionRequiredMixin
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -81,6 +81,10 @@ def profile_view(request,pk):
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
 
+def my_account_view(request):
+    return render(request, "my_account.html")
+
+
 def is_critic(user):
     return user.profile.user_type == 'critic'
 
@@ -89,7 +93,10 @@ def search_user_view(request):
     if query:
         try:
             user = User.objects.get(username=query)
-            return redirect('profile', pk=user.profile.pk)
+            if user==request.user:
+                return redirect('my_account')
+            else:
+                return redirect('profile', pk=user.profile.pk)
         except User.DoesNotExist:
             return render(request, 'user_not_found.html', {'query': query})
     return redirect('feed')
@@ -109,7 +116,7 @@ class AddReviewView(LoginRequiredMixin,View):
             selected_place = json.loads(request.POST.get('selected_place', '{}'))
             place_id = selected_place.get('place_id')
             name = selected_place.get('name')
-            address = selected_place.get('address', None)  # Set address to None if not provided
+            address = selected_place.get('address',None)  # Set address to None if not provided
             latitude = selected_place.get('latitude')
             longitude = selected_place.get('longitude')
 
@@ -138,7 +145,7 @@ class AddReviewView(LoginRequiredMixin,View):
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
 
-class AddProReviewView(GroupRequiredMixin,View):
+class AddProReviewView(PermissionRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         group_required = ["Critic"]
         form = CriticReviewForm()
@@ -146,7 +153,7 @@ class AddProReviewView(GroupRequiredMixin,View):
         return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
-        
+        group_required = ["Critic"]
         form = CriticReviewForm(request.POST, request.FILES)
 
         if form.is_valid():
