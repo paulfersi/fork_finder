@@ -21,9 +21,6 @@ class CriticReviewForm(forms.ModelForm):
 
 
 class CreateRegularUser(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email']
 
     def save(self, commit=True):
         user = super().save(commit)
@@ -34,13 +31,11 @@ class CreateRegularUser(UserCreationForm):
         return user
 
 class CreateCriticUser(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email']
-
     def save(self, commit=True):
-        user = super().save(commit)
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
         if commit:
+            user.save()
             profile = Profile.objects.create(user=user, user_type='critic')
             profile.save()
             group, created = Group.objects.get_or_create(name='Critics')
