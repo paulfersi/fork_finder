@@ -1,6 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, permission_required
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from .models import Profile,Review,Restaurant
 from .forms import ReviewForm,CriticReviewForm,CreateRegularUser,CreateCriticUser
 from django.contrib.auth.models import User
@@ -50,11 +49,6 @@ class FeedView(LoginRequiredMixin,View):
             "recommended_reviews": recommended_reviews,
             "favorite_reviews": favorite_reviews,
         })
-
-
-@login_required
-def account_view(request):
-    return render(request, 'account.html')
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
@@ -156,10 +150,7 @@ class AddReviewView(View):
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
-        # If form is not valid, render the form again with errors
-        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
-    
+
 @login_required
 def edit_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
