@@ -11,9 +11,12 @@ permission, created_permission = Permission.objects.get_or_create(
 )
 
 group1, created_group1 = Group.objects.get_or_create(name='Critics')
+user = User.objects.get(username="admin")
+user.groups.add(group1)
 group1.permissions.add(permission)
 
 group2, created_group2 = Group.objects.get_or_create(name='Regular')
+
 
 class ProfileInline(admin.StackedInline):
     model = Profile

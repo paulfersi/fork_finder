@@ -138,7 +138,7 @@ class AddReviewView(LoginRequiredMixin,View):
 
             review.save()
 
-            return redirect('feed')
+            return redirect('my_account')
         
         
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
@@ -147,13 +147,13 @@ class AddReviewView(LoginRequiredMixin,View):
 
 class AddProReviewView(PermissionRequiredMixin,View):
     def get(self, request, *args, **kwargs):
-        group_required = ["Critic"]
+        permission_required = ["can_write_featured_review"]
         form = CriticReviewForm()
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
-        group_required = ["Critic"]
+        permission_required = ["can_write_featured_review"]
         form = CriticReviewForm(request.POST, request.FILES)
 
         if form.is_valid():
@@ -185,7 +185,7 @@ class AddProReviewView(PermissionRequiredMixin,View):
 
             review.save()
 
-            return redirect('profile',pk=request.user.pk)
+            return redirect('my_account')
         
         # If form is not valid, render the form again with errors
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
