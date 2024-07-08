@@ -1,8 +1,19 @@
-# dwitter/admin.py
-
 from django.contrib import admin
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group,Permission
 from .models import Profile,Review,Restaurant
+from django.contrib.contenttypes.models import ContentType
+
+content_type = ContentType.objects.get_for_model(Review)
+permission = Permission.objects.create(
+    codename='can_write_featured_review',
+    name='Can write featured reviews',
+    content_type=content_type
+)
+
+group1 = Group.objects.create(name='Critics')
+group1.permissions.add(permission)
+
+group2 = Group.objects.create(name='Regular')
 
 class ProfileInline(admin.StackedInline):
     model = Profile

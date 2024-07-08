@@ -31,7 +31,7 @@ class CreateCriticUser(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit)
         user.profile.user_type = 'Critic'
-        g = Group.objects.get(name="Critic") 
+        g = Group.objects.get(name="Critics")  #assign to Critics group
         g.user_set.add(user)
         return user
     
