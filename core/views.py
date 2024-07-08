@@ -13,6 +13,7 @@ from .utils import get_recommended_reviews
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
+from braces.views import GroupRequiredMixin
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -64,7 +65,7 @@ class UserCreateView(CreateView):
 class ProUserCreateView(CreateView):
     form_class = CreateCriticUser
     template_name = "registration/pro_user_create.html"
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("pro_login")
 
 
 def profile_view(request,pk):
@@ -93,8 +94,8 @@ def search_user_view(request):
             return render(request, 'user_not_found.html', {'query': query})
     return redirect('feed')
 
-@method_decorator(login_required, name='dispatch')
-class AddReviewView(View):
+
+class AddReviewView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
         
@@ -137,8 +138,9 @@ class AddReviewView(View):
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
 
-class AddProReviewView(View):
+class AddProReviewView(GroupRequiredMixin,View):
     def get(self, request, *args, **kwargs):
+        group_required = ["Critic"]
         form = CriticReviewForm()
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
