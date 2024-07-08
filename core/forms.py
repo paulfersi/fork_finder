@@ -1,7 +1,7 @@
 from django import forms
-from .models import Review
+from .models import Review, Profile
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 
 
 class ReviewForm(forms.ModelForm):
@@ -21,17 +21,28 @@ class CriticReviewForm(forms.ModelForm):
 
 
 class CreateRegularUser(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
     def save(self, commit=True):
         user = super().save(commit)
-        g = Group.objects.get(name="Regular") 
-        g.user_set.add(user)
+        if commit:
+            Profile.objects.create(user=user, user_type='regular')
+            group, created = Group.objects.get_or_create(name='Regular')
+            group.user_set.add(user)
         return user
-    
+
 class CreateCriticUser(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
     def save(self, commit=True):
         user = super().save(commit)
-        user.profile.user_type = 'Critic'
-        g = Group.objects.get(name="Critics")  #assign to Critics group
-        g.user_set.add(user)
+        if commit:
+            profile = Profile.objects.create(user=user, user_type='critic')
+            profile.save()
+            group, created = Group.objects.get_or_create(name='Critics')
+            group.user_set.add(user)
         return user
-    

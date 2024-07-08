@@ -146,14 +146,13 @@ class AddReviewView(LoginRequiredMixin,View):
 
 
 class AddProReviewView(PermissionRequiredMixin,View):
+    permission_required = 'app.can_write_featured_review'
     def get(self, request, *args, **kwargs):
-        permission_required = ["can_write_featured_review"]
         form = CriticReviewForm()
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
-        permission_required = ["can_write_featured_review"]
         form = CriticReviewForm(request.POST, request.FILES)
 
         if form.is_valid():
