@@ -49,6 +49,7 @@
                 {% if review.user == request.user %}
                 <h3 class="mb-4">My Reviews:</h3>
                 {% endif %}
+                <br>
                 <div class="row">
                     {% for review in profile.user.reviews.all %}
                     <div class="col-md-4 mb-3">
@@ -67,11 +68,8 @@
                                     </small>
                                 </p>
                                 {% if review.user == request.user %}
-                                    {% if review.user.profile.is_culinary_critic %}
-                                        <a href="{% url 'edit_pro_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
-                                    {% else %}
-                                        <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
-                                    {% endif %}
+                                    <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
+                                    
                                     <!-- Delete confirmation -->
                                     <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ review.pk }}">
                                         Delete

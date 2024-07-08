@@ -178,7 +178,7 @@ class AddProReviewView(GroupRequiredMixin,View):
 
             review.save()
 
-            return redirect('feed')
+            return redirect('profile',pk=request.user.pk)
         
         # If form is not valid, render the form again with errors
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
@@ -189,30 +189,23 @@ def edit_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
     
     if request.method == 'POST':
-        form = ReviewForm(request.POST, request.FILES, instance=review)
+
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm(request.POST, request.FILES, instance=review)
+        else:
+            form = ReviewForm(request.POST, request.FILES, instance=review)
         
         if form.is_valid():
             form.save()
-            return redirect('profile', pk=request.user.pk)
+            return redirect('profile', pk=request.user.profile.pk)
     else:
-        form = ReviewForm(instance=review)
+        if request.user.profile.is_culinary_critic:
+            form = CriticReviewForm(instance=review)
+        else:
+            form = ReviewForm(instance=review)
     
     return render(request, 'edit_review.html', {'form': form, 'review': review})
 
-@login_required
-def edit_pro_review(request, pk):
-    review = get_object_or_404(Review, pk=pk, user=request.user)
-    
-    if request.method == 'POST':
-        form = CriticReviewForm(request.POST, request.FILES, instance=review)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('profile', pk=request.user.pk)
-    else:
-        form = CriticReviewForm(instance=review)
-    
-    return render(request, 'edit_pro_review.html', {'form': form, 'review': review})
 
 @login_required
 def delete_review(request, pk):
@@ -223,7 +216,7 @@ def delete_review(request, pk):
         messages.success(request, 'Review deleted successfully.')
         return redirect('profile', pk=request.user.profile.pk)
 
-    return redirect('profile', pk=request.user.pk)
+    return redirect('profile', pk=request.user.profile.pk)
 
 
 @login_required

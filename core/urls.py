@@ -10,7 +10,6 @@ urlpatterns = [
     path("profile/<int:pk>/", profile_view, name="profile"),
     path('search/', search_user_view, name='search_user'),
     path('edit_review/<int:pk>/', edit_review, name='edit_review'),
-    path('edit_pro_review/<int:pk>/', edit_review, name='edit_pro_review'),
     path('review/delete/<int:pk>/', delete_review, name='delete_review'),
     path('get_location/', get_location, name='get_location'),
     path('view_on_map/<int:restaurant_id>/', view_on_map, name='view_on_map'),
