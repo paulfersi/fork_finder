@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
-from core.views import UserCreateView, landing_page_view, pro_login_view
+from core.views import UserCreateView, landing_page_view, pro_login_view, ProUserCreateView
 from django.conf.urls.static import static
 from django.conf import settings
 from .settings import MEDIA_URL, MEDIA_ROOT
@@ -27,6 +27,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('core.urls')),
     path("register/", UserCreateView.as_view(), name="register"),
+    path("pro-register/", ProUserCreateView.as_view(), name="pro_register"),
     path("login/",auth_views.LoginView.as_view(template_name='registration/login.html'), name="login"), 
     path("logout/", auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name="logout"),
     path('', landing_page_view, name='landing_page'),

@@ -18,7 +18,7 @@
                         <div class="card mb-3 {% if review.is_featured %}border-primary{% endif %}">
                             <div class="card-header">
                                 <h5>@{{ review.user.username }} 
-                                    {% if review.is_featured %}
+                                    {% if review.user.profile.is_culinary_critic %}
                                         <i class="bi bi-patch-check-fill text-primary" title="Verified"></i>
                                     {% endif %}
                                 </h5>

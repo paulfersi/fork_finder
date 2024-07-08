@@ -5,7 +5,11 @@
 <div class="container">
     <div class="row align-items-center mb-4">
         <div class="col-md-4">
-            <h2>@{{ profile.user.username }}</h2>
+            <h2>@{{ profile.user.username }} 
+                {% if profile.is_culinary_critic %}
+                    <i class="bi bi-patch-check-fill text-primary" title="Verified"></i>
+                {% endif %}
+            </h2>
         </div>
         <div class="col-md-4 text-center">
             <h5>{{ profile.follows.count }} Following</h5>

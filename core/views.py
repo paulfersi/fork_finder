@@ -2,8 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from .models import Profile,Review,Restaurant
-from .forms import ReviewForm,CriticReviewForm
-from django.contrib.auth.forms import UserCreationForm
+from .forms import ReviewForm,CriticReviewForm,CreateRegularUser,CreateCriticUser
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView
 from django.views import View
@@ -12,14 +11,14 @@ import json
 from django.conf import settings
 from django.contrib import messages
 from .utils import get_recommended_reviews
-from django.views.decorators.http import require_POST
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
-@method_decorator(login_required, name='dispatch')
-class FeedView(View):
+
+class FeedView(LoginRequiredMixin,View):
     template_name = 'feed.html'
 
     def get(self, request, *args, **kwargs):
@@ -64,9 +63,15 @@ def pro_login_view(request):
     return render(request, 'registration/pro_login.html')
 
 class UserCreateView(CreateView):
-    form_class = UserCreationForm
+    form_class = CreateRegularUser
     template_name = "registration/user_create.html"
     success_url = reverse_lazy("login")
+
+class ProUserCreateView(CreateView):
+    form_class = CreateCriticUser
+    template_name = "registration/pro_user_create.html"
+    success_url = reverse_lazy("login")
+
 
 def profile_view(request,pk):
     profile = Profile.objects.get(pk=pk)
