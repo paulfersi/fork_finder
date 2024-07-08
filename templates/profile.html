@@ -67,8 +67,11 @@
                                     </small>
                                 </p>
                                 {% if review.user == request.user %}
-                                    <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
-
+                                    {% if review.user.profile.is_culinary_critic %}
+                                        <a href="{% url 'edit_pro_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
+                                    {% else %}
+                                        <a href="{% url 'edit_review' review.pk %}" class="btn btn-outline-primary">Edit</a>
+                                    {% endif %}
                                     <!-- Delete confirmation -->
                                     <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ review.pk }}">
                                         Delete

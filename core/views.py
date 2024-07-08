@@ -96,19 +96,13 @@ def search_user_view(request):
 @method_decorator(login_required, name='dispatch')
 class AddReviewView(View):
     def get(self, request, *args, **kwargs):
-        if request.user.profile.is_culinary_critic:
-            form = CriticReviewForm()
-        else:
-            form = ReviewForm()
+        form = ReviewForm()
         
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
         return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
     def post(self, request, *args, **kwargs):
-        if request.user.profile.is_culinary_critic:
-            form = CriticReviewForm(request.POST, request.FILES)
-        else:
-            form = ReviewForm(request.POST, request.FILES)
+        form = ReviewForm(request.POST, request.FILES)
 
         if form.is_valid():
             selected_place = json.loads(request.POST.get('selected_place', '{}'))
@@ -118,7 +112,49 @@ class AddReviewView(View):
             latitude = selected_place.get('latitude')
             longitude = selected_place.get('longitude')
 
-            # Ensure address is passed as None if not provided
+
+            restaurant, created = Restaurant.objects.get_or_create(
+                place_id=place_id,
+                defaults={
+                    'name': name,
+                    'address': address,
+                    'latitude': latitude,
+                    'longitude': longitude,
+                }
+            )
+
+            review = form.save(commit=False)
+            review.user = request.user
+            review.restaurant = restaurant
+            review.is_featured = False
+
+            review.save()
+
+            return redirect('feed')
+        
+        
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
+        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
+
+
+class AddProReviewView(View):
+    def get(self, request, *args, **kwargs):
+        form = CriticReviewForm()
+        mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
+        return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
+
+    def post(self, request, *args, **kwargs):
+        
+        form = CriticReviewForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            selected_place = json.loads(request.POST.get('selected_place', '{}'))
+            place_id = selected_place.get('place_id')
+            name = selected_place.get('name')
+            address = selected_place.get('address', None)  # Set address to None if not provided
+            latitude = selected_place.get('latitude')
+            longitude = selected_place.get('longitude')
+
             restaurant, created = Restaurant.objects.get_or_create(
                 place_id=place_id,
                 defaults={
@@ -133,14 +169,10 @@ class AddReviewView(View):
             review.user = request.user
             review.restaurant = restaurant
 
-            # Check if the user has permission to mark a review as featured
-            if request.user.profile.is_culinary_critic:
-                review.is_featured = True
-                review.taste_rating = form.cleaned_data.get('taste_rating')
-                review.presentation_rating = form.cleaned_data.get('presentation_rating')
-                review.service_rating = form.cleaned_data.get('service_rating')
-            else:
-                review.is_featured = False
+            review.is_featured = True
+            review.taste_rating = form.cleaned_data.get('taste_rating')
+            review.presentation_rating = form.cleaned_data.get('presentation_rating')
+            review.service_rating = form.cleaned_data.get('service_rating')
 
             review.save()
 
@@ -148,29 +180,37 @@ class AddReviewView(View):
         
         # If form is not valid, render the form again with errors
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
-        return render(request, 'add_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
-
+        return render(request, 'add_pro_review.html', {'form': form, 'mapbox_access_token': mapbox_access_token})
 
 @login_required
 def edit_review(request, pk):
     review = get_object_or_404(Review, pk=pk, user=request.user)
     
     if request.method == 'POST':
-        if request.user.profile.is_culinary_critic:
-            form = CriticReviewForm(request.POST, request.FILES, instance=review)
-        else:
-            form = ReviewForm(request.POST, request.FILES, instance=review)
+        form = ReviewForm(request.POST, request.FILES, instance=review)
         
         if form.is_valid():
             form.save()
             return redirect('profile', pk=request.user.pk)
     else:
-        if request.user.profile.is_culinary_critic:
-            form = CriticReviewForm(instance=review)
-        else:
-            form = ReviewForm(instance=review)
+        form = ReviewForm(instance=review)
     
     return render(request, 'edit_review.html', {'form': form, 'review': review})
+
+@login_required
+def edit_pro_review(request, pk):
+    review = get_object_or_404(Review, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        form = CriticReviewForm(request.POST, request.FILES, instance=review)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('profile', pk=request.user.pk)
+    else:
+        form = CriticReviewForm(instance=review)
+    
+    return render(request, 'edit_pro_review.html', {'form': form, 'review': review})
 
 @login_required
 def delete_review(request, pk):

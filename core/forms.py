@@ -17,7 +17,7 @@ class CriticReviewForm(forms.ModelForm):
 
     class Meta:
         model = Review
-        fields = ['body', 'rating', 'photo', 'taste_rating', 'presentation_rating', 'service_rating']
+        fields = ['body', 'rating', 'photo', 'taste_rating', 'presentation_rating', 'service_rating', ]
 
 
 class CreateRegularUser(UserCreationForm):

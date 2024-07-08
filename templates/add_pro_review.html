@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Add Review</h2>
+            </div>
+            <div class="card-body">
+                    <form id="review-form" method="post" action="{% url 'add_pro_review' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="restaurant-name">Restaurant Name:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" id="restaurant-name" name="restaurant_name" class="form-control" required>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="searchRestaurant()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="restaurant-suggestions" class="mt-4" style="display: none;">
+                            <p>Select the correct restaurant:</p>
+                            <div id="suggestions-list" class="list-group mb-3"></div>
+                            <div id="map" style="width: 100%; height: 400px; margin-top: 10px;"></div>
+
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taste_rating">Global Taste Rating:</label>
+                            <input type="number" id="taste_rating" name="taste_rating" class="form-control" min="1" max="5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dish-quality">Presentation Rating:</label>
+                            <input type="number" id="presentation-rating" name="presentation_rating" class="form-control" min="1" max="5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="service-rating">Service Rating:</label>
+                            <input type="number" id="service-rating" name="service_rating" class="form-control" min="1" max="5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review-body">Review:</label>
+                            <textarea id="review-body" name="body" class="form-control" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review-rating"> Global Rating:</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5 stars">&#9733;</label>
+                                <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">&#9733;</label>
+                                <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">&#9733;</label>
+                                <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">&#9733;</label>
+                                <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">&#9733;</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-photo">Photo:</label>
+                            <input type="file" id="review-photo" name="photo" class="form-control-file" accept="image/*">
+                        </div>
+                        <button type="submit" id="submit-button" class="btn btn-primary mt-3" style="display: none;">Submit</button>
+                        
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    mapboxgl.accessToken = '{{ mapbox_access_token }}';
+    let map, marker;
+
+    function searchRestaurant() {
+        const restaurantName = document.getElementById('restaurant-name').value.trim();
+        if (!restaurantName) {
+            alert('Please enter a restaurant name.');
+            return;
+        }
+
+        const bboxEurope = '-23.958156,31.052934,44.830131,71.185989';
+
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${restaurantName}.json?access_token={{ mapbox_access_token }}&bbox=${bboxEurope}`)
+            .then(response => response.json())
+            .then(data => {
+                const features = data.features.slice(0, 3); // Get first 3 suggestions
+
+                if (features.length === 0) {
+                    alert('No restaurant found. Please try again.');
+                    return;
+                }
+
+                const suggestionsList = document.getElementById('suggestions-list');
+                suggestionsList.innerHTML = ''; // Clear previous suggestions
+
+                features.forEach((feature, index) => {
+                    const suggestedRestaurant = {
+                        place_id: feature.id,
+                        name: feature.text,
+                        latitude: feature.center[1],
+                        longitude: feature.center[0],
+                    };
+
+                    if (feature.properties.address) {
+                        suggestedRestaurant.address = feature.properties.address;
+                    }
+
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.classList.add('list-group-item', 'list-group-item-action');
+                    suggestionItem.innerHTML = `
+                        <input type="radio" id="suggestion-${index}" name="selected_place" value='${JSON.stringify(suggestedRestaurant)}' ${index === 0 ? 'checked' : ''}>
+                        <label for="suggestion-${index}" class="ml-2">${suggestedRestaurant.name}, ${suggestedRestaurant.address}</label>
+                    `;
+                    suggestionsList.appendChild(suggestionItem);
+
+                    if (index === 0) {
+                        displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
+                    }
+
+                    suggestionItem.querySelector('input').addEventListener('change', function () {
+                        displayMap(suggestedRestaurant.latitude, suggestedRestaurant.longitude);
+                    });
+                });
+
+                document.getElementById('restaurant-suggestions').style.display = 'block';
+                document.getElementById('submit-button').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching restaurant suggestions:', error);
+                alert('Error fetching restaurant suggestions. Please try again later.');
+            });
+    }
+
+    function displayMap(latitude, longitude) {
+        if (!map) {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [longitude, latitude],
+                zoom: 15
+            });
+
+            marker = new mapboxgl.Marker()
+                .setLngLat([longitude, latitude])
+                .addTo(map);
+        } else {
+            map.setCenter([longitude, latitude]);
+            marker.setLngLat([longitude, latitude]);
+        }
+    }
+</script>
+
+
+
+{% endblock %}
