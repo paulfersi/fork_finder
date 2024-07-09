@@ -1,0 +1,9 @@
+{% extends 'registration/base_login.html' %}
+
+{% block content %}
+    <h2>Logged Out Successfully</h2>
+    <p>You have been successfully logged out.</p>
+    <br>
+    <a href="{% url 'landing_page' %}">Back to home</a>
+    
+{% endblock %}

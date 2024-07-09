@@ -9,9 +9,6 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         user_profile = Profile(user=instance)
         user_profile.save()
-        if instance.profile != user_profile:
-            user_profile.follows.add(instance.profile)
-            user_profile.save()
 
 class Profile(models.Model):
     USER_TYPE_CHOICES = (
@@ -38,21 +35,6 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.is_culinary_critic():
-            group, created = Group.objects.get_or_create(name='Critics')
-            self.user.groups.add(group)
-            content_type = ContentType.objects.get_for_model(Review)
-            permission, created = Permission.objects.get_or_create(
-                codename='can_write_featured_review',
-                name='Can write featured review',
-                content_type=content_type,
-            )
-            group.permissions.add(permission)
-        else:
-            group = Group.objects.filter(name='Critics').first()
-            if group:
-                self.user.groups.remove(group)
-
 
 class Restaurant(models.Model):
     place_id = models.CharField(max_length=255, unique=True)
@@ -84,7 +66,7 @@ class Review(models.Model):
     
     def save(self, *args, **kwargs):
         if self.is_featured:
-            if not self.user.has_perm('app.can_write_featured_review'):
+            if not self.user.has_perm('core.can_write_featured_review'):
                 raise ValueError("Only culinary critics can write featured reviews")
         
         super().save(*args, **kwargs)

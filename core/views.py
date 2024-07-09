@@ -11,9 +11,9 @@ from django.conf import settings
 from django.contrib import messages
 from .utils import get_recommended_reviews
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
 from braces.views import PermissionRequiredMixin
+from django.contrib.auth import logout
+
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
 
@@ -56,6 +56,15 @@ def landing_page_view(request):
 
 def pro_login_view(request):
     return render(request, 'registration/pro_login.html')
+
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('logout_success')
+    return render(request, 'registration/logout.html')
+
+def logout_success_view(request):
+    return render(request, 'registration/logout_success.html')
 
 class UserCreateView(CreateView):
     form_class = CreateRegularUser
@@ -146,7 +155,7 @@ class AddReviewView(LoginRequiredMixin,View):
 
 
 class AddProReviewView(PermissionRequiredMixin,View):
-    permission_required = 'app.can_write_featured_review'
+    permission_required = 'core.can_write_featured_review'
     def get(self, request, *args, **kwargs):
         form = CriticReviewForm()
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN
