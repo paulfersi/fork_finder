@@ -212,7 +212,7 @@ def edit_review(request, pk):
         
         if form.is_valid():
             form.save()
-            return redirect('profile', pk=request.user.profile.pk)
+            return redirect('my_account')
     else:
         if request.user.profile.is_culinary_critic:
             form = CriticReviewForm(instance=review)

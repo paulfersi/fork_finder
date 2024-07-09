@@ -2,9 +2,13 @@
 
 {% block content %}
     <h2>Logout</h2>
+    <br>
     <p>Are you sure you want to logout?</p>
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
+    <br>
+    <a href="{% url 'feed' %}">Back to feed</a>
+
 {% endblock %}

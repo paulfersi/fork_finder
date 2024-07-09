@@ -6,16 +6,16 @@
     <div class="row align-items-center mb-4">
         <div class="col-md-4">
             <h2>@{{ request.user.username }} 
-                {% if request.profile.is_culinary_critic %}
+                {% if request.user.profile.is_culinary_critic %}
                     <i class="bi bi-patch-check-fill text-primary" title="Verified"></i>
                 {% endif %}
             </h2>
         </div>
         <div class="col-md-4 text-center">
-            <h5>{{ profile.follows.count }} Following</h5>
+            <h5>{{ request.user.profile.follows.count }} Following</h5>
         </div>
         <div class="col-md-4 text-center">
-            <h5>{{ profile.followed_by.count }} Followers</h5>
+            <h5>{{ request.user.profile.followed_by.count }} Followers</h5>
         </div>
     </div>
 
