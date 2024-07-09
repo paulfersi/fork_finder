@@ -33,26 +33,39 @@ class CreateRegularUser(UserCreationForm):
 
 class CreateCriticUser(UserCreationForm):
     def save(self, commit=True):
-        user = super().save(commit)
-        profile, created = Profile.objects.get_or_create(user=user)
-        if created:
-            profile.user_type = 'critic'
-            profile.save()
-        group, created = Group.objects.get_or_create(name="Critics")
-        group.user_set.add(user)
-        content_type = ContentType.objects.get_for_model(Review)
+            user = super().save(commit=False)
+            try:
+                if commit:
+                    user.save()
+                
+                profile, created = Profile.objects.get_or_create(user=user)
+                profile.user_type = 'critic'
+                profile.save()
+                
+                group, created = Group.objects.get_or_create(name="Critics")
+                group.user_set.add(user)
+                content_type = ContentType.objects.get_for_model(Review)
+                
+                permission = Permission.objects.filter(
+                    codename='can_write_featured_review',
+                    content_type=content_type,
+                ).first()
+                
+                if permission is None:
+                    permission = Permission.objects.create(
+                        codename='can_write_featured_review',
+                        name='Can write featured review',
+                        content_type=content_type,
+                    )
+                
+                if permission not in group.permissions.all():
+                    group.permissions.add(permission)
+                
+            except Exception as e:
 
-        permission = Permission.objects.filter(
-            codename='can_write_featured_review',
-            content_type=content_type,
-        ).first()
-
-        if permission is None:
-            permission = Permission.objects.create(
-                codename='can_write_featured_review',
-                name='Can write featured review',
-                content_type=content_type,
-            )
-
-        if permission not in group.permissions.all():
-            group.permissions.add(permission)
+                print(f"An error occurred: {e}")
+                if user.id:
+                    user.delete() 
+                raise
+            
+            return user
