@@ -21,23 +21,19 @@ class CriticReviewForm(forms.ModelForm):
 
 
 class CreateRegularUser(UserCreationForm):
-
     def save(self, commit=True):
         user = super().save(commit)
-        if commit:
-            Profile.objects.create(user=user, user_type='regular')
-            group, created = Group.objects.get_or_create(name='Regular')
-            group.user_set.add(user)
+        user.profile.user_type = 'regular'
+        user.profile.save()
+        group, created = Group.objects.get_or_create(name="Regular")
+        group.user_set.add(user)
         return user
 
 class CreateCriticUser(UserCreationForm):
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-            profile = Profile.objects.create(user=user, user_type='critic')
-            profile.save()
-            group, created = Group.objects.get_or_create(name='Critics')
-            group.user_set.add(user)
+        user = super().save(commit)
+        user.profile.user_type = 'critic'
+        user.profile.save()
+        group, created = Group.objects.get_or_create(name="Critics")
+        group.user_set.add(user)
         return user

@@ -225,8 +225,7 @@ def delete_review(request, pk):
     return redirect('profile', pk=request.user.profile.pk)
 
 
-@login_required
-@csrf_protect
+
 def get_location(request):
     if request.method == 'POST':
         latitude = request.POST.get('latitude')

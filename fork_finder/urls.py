@@ -31,7 +31,7 @@ urlpatterns = [
     path("login/",auth_views.LoginView.as_view(template_name='registration/login.html'), name="login"), 
     path("logout/", auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name="logout"),
     path('', landing_page_view, name='landing_page'),
-    path('pro-login/', pro_login_view, name='pro_login'),
+    path('pro-login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='pro_login'),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 
