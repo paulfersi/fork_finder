@@ -25,9 +25,12 @@ class FeedView(LoginRequiredMixin,View):
         recommended_reviews = get_recommended_reviews(request.user)
         profile = request.user.profile
         favorite_reviews = profile.favorite_reviews.all()
+        followed_users = profile.follows.all()
+        followed_reviews = Review.objects.filter(user__profile__in=followed_users).order_by('-created_at')
         return render(request, self.template_name, {
             "recommended_reviews": recommended_reviews,
             "favorite_reviews": favorite_reviews,
+            "followed_reviews": followed_reviews,
         })
 
     def post(self, request, *args, **kwargs):
@@ -46,16 +49,17 @@ class FeedView(LoginRequiredMixin,View):
             favorite_reviews = profile.favorite_reviews.all()
 
         recommended_reviews = get_recommended_reviews(request.user)
+        followed_users = profile.follows.all()
+        followed_reviews = Review.objects.filter(user__profile__in=followed_users).order_by('-created_at')
+
         return render(request, self.template_name, {
             "recommended_reviews": recommended_reviews,
             "favorite_reviews": favorite_reviews,
+            "followed_reviews": followed_reviews,
         })
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
-
-def pro_login_view(request):
-    return render(request, 'registration/pro_login.html')
 
 def logout_view(request):
     if request.method == 'POST':

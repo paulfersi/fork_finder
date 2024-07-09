@@ -13,8 +13,8 @@
     <div class="tab-content mt-3" id="feedTabsContent">
         <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
             <div class="card-columns">
-                {% for followed in user.profile.follows.all %}
-                    {% for review in followed.user.reviews.all %}
+
+                    {% for review in followed_reviews %}
                         <div class="card mb-3 {% if review.is_featured %}border-primary{% endif %}">
                             <div class="card-header">
                                 <h5>@{{ review.user.username }} 
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     {% endfor %}
-                {% endfor %}
+
             </div>
         </div>
         
