@@ -15,6 +15,10 @@ Users can mark reviews as favorites and see them on their personal list, search 
 
 The app also enables logging in as a culinary critic to provide more detailed reviews with a 'verified' tag.
 
+There are two groups of users: **regular users** and **culinary critics**. The users in the **Critics** group can write featured reviews,with a permission ensuring that they are the only ones who can do so.
+
+Currently, user information and authentication logic are the same for all users, but the next step for the project is to implement a more robust and detailed authentication system for culinary critics.
+
 ## Screenshots
 
 Feed:
