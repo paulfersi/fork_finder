@@ -6,6 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 import json
 import os
 from .forms import CreateCriticUser
+from core.utils import get_recommended_reviews, haversine
+from decimal import Decimal
 
 """
 
@@ -59,7 +61,7 @@ class ReviewTests(TestCase):
 
     def test_regular_user_cannot_add_featured_review(self):
         self.client.login(username='regularuser', password='password')
-        with open('media/review_photos/photo1.jpg', 'rb') as image:
+        with open('docs/example photos/photo1.jpg', 'rb') as image:
             response = self.client.post(reverse('add_pro_review'), {
                 'body': 'Test review body',
                 'rating': 5,
@@ -97,7 +99,7 @@ class ReviewTests(TestCase):
 
     def test_review_added_to_database(self):
         self.client.login(username='regularuser', password='password')
-        with open('media/review_photos/photo2.jpg', 'rb') as image:
+        with open('docs/example photos/photo2.jpg', 'rb') as image:
             response = self.client.post(reverse('add_review'), {
                 'body': 'Test review body',
                 'rating': 5,

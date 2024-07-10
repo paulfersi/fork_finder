@@ -28,7 +28,7 @@ def get_recommended_reviews(user):
     for review in reviews:
 
         if review.rating < 3:
-            continue
+            continue        #exclude bad reviews
 
         restaurant = review.restaurant
         reviewer_profile = review.user.profile
