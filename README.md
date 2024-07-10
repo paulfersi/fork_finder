@@ -89,5 +89,6 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 - JavaScript
 - Mapbox (for geocoding and map rendering)
 - jQuery
+- SQLite3
 
 For documentation on the geocoding API, visit https://docs.mapbox.com/api/search/geocoding-v5/.
