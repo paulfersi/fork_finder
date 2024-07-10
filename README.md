@@ -70,7 +70,10 @@ python manage.py runserver
 ```    
 
 Now you can login with the username "admin" and the password "1234".
-To access the admin section offered by django go to the url "admin/"
+
+To access the admin section offered by django go to the url "admin/".
+
+You can find 9 photos to create reviews in the **docs/example photos** folder.
 
 #### Mapbox
 
