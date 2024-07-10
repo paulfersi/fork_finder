@@ -102,3 +102,9 @@ In the tests.py file of the **core** app you can find 5 tests to check the corre
 3. adding a review to DB
 4. test a critic user permissions
 5. test a regular user permissions
+6. test the correct user creation using the forms
+
+They are divided in two main sections:
+1. **ReviewTests** that checks the functionalities related to reviews, including permissions for regular and critic users, and the correct addition of reviews and favorites.
+
+2. **CreateCriticUserFormTests** that validates the user creation form for culinary critics, ensuring proper profile setup, group assignment, and permission configuration.

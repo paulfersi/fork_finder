@@ -5,6 +5,7 @@ from .models import Profile, Review, Restaurant
 from django.contrib.contenttypes.models import ContentType
 import json
 import os
+from .forms import CreateCriticUser
 
 """
 
@@ -122,3 +123,46 @@ class ReviewTests(TestCase):
         self.assertTrue(self.regular_user.groups.filter(name='Regular').exists())
         self.assertEqual(self.regular_user.profile.user_type, 'regular')
         self.assertFalse(self.regular_user.has_perm('core.can_write_featured_review'))
+
+
+
+class CreateCriticUserFormTests(TestCase):
+    """
+    Test of the user and profile creation using the form for culinary critics
+    
+    """
+
+    def test_create_critic_user(self):
+        form_data = {
+            'username': 'testcritic',
+            'password1': 'testpassword123',
+            'password2': 'testpassword123'
+        }
+        
+        form = CreateCriticUser(data=form_data)
+        
+        self.assertTrue(form.is_valid())
+        
+        user = form.save()
+
+        #user is created
+        self.assertIsNotNone(user)
+        #user is critic
+        self.assertEqual(user.username, 'testcritic')
+
+        profile = Profile.objects.get(user=user)
+        self.assertEqual(profile.user_type, 'critic')
+        
+        critics_group = Group.objects.get(name='Critics')
+        self.assertIn(user, critics_group.user_set.all())
+        
+        content_type = ContentType.objects.get_for_model(Review)
+        can_write_featured_review_permission = Permission.objects.get(
+            codename='can_write_featured_review',
+            content_type=content_type,
+        )
+        #chec that the critics group has this permission
+        self.assertIn(can_write_featured_review_permission, critics_group.permissions.all())
+
+        #check that the user has the permission
+        self.assertTrue(user.has_perm('core.can_write_featured_review'))
