@@ -92,3 +92,13 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 - SQLite3
 
 For documentation on the geocoding API, visit https://docs.mapbox.com/api/search/geocoding-v5/.
+
+## Testing
+
+In the tests.py file of the **core** app you can find 5 tests to check the correct working of the following features:
+
+1. regular user cannot add featured review
+2. adding a review to favourites
+3. adding a review to DB
+4. test a critic user permissions
+5. test a regular user permissions

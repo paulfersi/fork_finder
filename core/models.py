@@ -52,7 +52,7 @@ class Review(models.Model):
     presentation_rating = models.PositiveSmallIntegerField(blank=True, null=True)
     service_rating = models.PositiveSmallIntegerField(blank=True, null=True)
 
-    photo = models.ImageField(upload_to='media/review_photos/')
+    photo = models.ImageField(upload_to='review_photos/')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group, Permission
 from .models import Profile, Review, Restaurant
 from django.contrib.contenttypes.models import ContentType
 import json
+import os
 
 """
 
@@ -49,6 +50,12 @@ class ReviewTests(TestCase):
             place_id="1234", name="Test Restaurant", address="123 Street", latitude="0.000000", longitude="0.000000"
         )
 
+    def tearDown(self):
+        for review in Review.objects.all():
+            if review.photo:
+                if os.path.exists(review.photo.path):
+                    os.remove(review.photo.path)
+
     def test_regular_user_cannot_add_featured_review(self):
         self.client.login(username='regularuser', password='password')
         with open('media/review_photos/photo1.jpg', 'rb') as image:
@@ -89,7 +96,7 @@ class ReviewTests(TestCase):
 
     def test_review_added_to_database(self):
         self.client.login(username='regularuser', password='password')
-        with open('media/review_photos/photo1.jpg', 'rb') as image:
+        with open('media/review_photos/photo2.jpg', 'rb') as image:
             response = self.client.post(reverse('add_review'), {
                 'body': 'Test review body',
                 'rating': 5,
