@@ -21,6 +21,10 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING('Superuser "{}" already exists'.format(admin_username)))
 
+        admin_profile, created = Profile.objects.get_or_create(user=admin_user, defaults={'user_type': 'critic'})
+        if created:
+            admin_profile.save()
+
         critic_group, created = Group.objects.get_or_create(name="Critics")
         content_type = ContentType.objects.get_for_model(Review)
         can_write_featured_review, created = Permission.objects.get_or_create(
@@ -185,10 +189,14 @@ class Command(BaseCommand):
             if created:
                 profile.save()
             
-
             if user_type == 'critic':
                 user.groups.add(critic_group)
                 user.user_permissions.add(can_write_featured_review)
+
+            admin_user.profile.follows.add(profile)
+            profile.followed_by.add(admin_user.profile)
+        
+        admin_user.profile.save()
 
         for restaurant_data in restaurants_data:
             place_id = restaurant_data['place_id']
