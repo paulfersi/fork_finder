@@ -60,6 +60,9 @@ git clone https://github.com/paulfersi/fork_finder.git
 python manage.py populate_db
 ```
 
+(you can erase an existing DB with: `python manage.py erase_db` )
+
+
 4. Run the server ad connect to the localhost address:
    
 ```bash
