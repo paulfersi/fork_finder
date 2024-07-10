@@ -13,6 +13,7 @@ from .utils import get_recommended_reviews
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import PermissionRequiredMixin
 from django.contrib.auth import logout
+from django.http import HttpResponseForbidden
 
 
 MAPBOX_TOKEN = settings.MAPBOX_ACCESS_TOKEN
@@ -160,6 +161,10 @@ class AddReviewView(LoginRequiredMixin,View):
 
 class AddProReviewView(PermissionRequiredMixin,View):
     permission_required = 'core.can_write_featured_review'
+
+    def handle_no_permission(self,request):
+        return HttpResponseForbidden()
+    
     def get(self, request, *args, **kwargs):
         form = CriticReviewForm()
         mapbox_access_token = settings.MAPBOX_ACCESS_TOKEN

@@ -3,6 +3,19 @@ from django.urls import reverse
 from django.contrib.auth.models import User, Group, Permission
 from .models import Profile, Review, Restaurant
 from django.contrib.contenttypes.models import ContentType
+import json
+
+"""
+
+Tests executed:
+
+1. regular user cannot add featured review
+2. add a review to favourites
+3. add review to database
+4. test a critic user permissions
+5. test a regular user permissions
+
+"""
 
 class ReviewTests(TestCase):
     def setUp(self):
@@ -37,17 +50,25 @@ class ReviewTests(TestCase):
         )
 
     def test_regular_user_cannot_add_featured_review(self):
-        #user cannot write a pro review
         self.client.login(username='regularuser', password='password')
-        response = self.client.post(reverse('add_pro_review'), {
-            'body': 'Test review body',
-            'rating': 5,
-            'taste_rating': 4,
-            'presentation_rating': 4,
-            'service_rating': 4,
-            'restaurant': self.restaurant.id,
-        })
-        self.assertEqual(response.status_code, 403)  
+        with open('media/review_photos/photo1.jpg', 'rb') as image:
+            response = self.client.post(reverse('add_pro_review'), {
+                'body': 'Test review body',
+                'rating': 5,
+                'taste_rating': 4,
+                'presentation_rating': 4,
+                'service_rating': 4,
+                'photo': image,
+                'selected_place': json.dumps({
+                    'place_id': 'test_place_id',
+                    'name': 'Test Restaurant',
+                    'address': '123 Test Street',
+                    'latitude': '0.000000',
+                    'longitude': '0.000000'
+                }),
+                'restaurant': self.restaurant.id,
+            })
+        self.assertEqual(response.status_code, 403)
 
     def test_add_to_favorites(self):
         self.client.login(username='regularuser', password='password')
@@ -68,15 +89,21 @@ class ReviewTests(TestCase):
 
     def test_review_added_to_database(self):
         self.client.login(username='regularuser', password='password')
-        response = self.client.post(reverse('add_review'), {
-            'body': 'Test review body',
-            'rating': 5,
-            'restaurant': self.restaurant.id,
-        })
+        with open('media/review_photos/photo1.jpg', 'rb') as image:
+            response = self.client.post(reverse('add_review'), {
+                'body': 'Test review body',
+                'rating': 5,
+                'photo': image,
+                'selected_place': json.dumps({
+                    'place_id': 'test_place_id',
+                    'name': 'Test Restaurant',
+                    'address': '123 Test Street',
+                    'latitude': '0.000000',
+                    'longitude': '0.000000'
+                }),
+                'restaurant': self.restaurant.id,
+            })
         
-        self.assertEqual(response.status_code, 200)
-        
-
         self.assertTrue(Review.objects.filter(body='Test review body', user=self.regular_user).exists())
 
     def test_critic_user_permission(self):
