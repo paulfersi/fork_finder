@@ -79,3 +79,12 @@ class ReviewTests(TestCase):
 
         self.assertTrue(Review.objects.filter(body='Test review body', user=self.regular_user).exists())
 
+    def test_critic_user_permission(self):
+        self.assertTrue(self.critic_user.groups.filter(name='Critics').exists())
+        self.assertEqual(self.critic_user.profile.user_type, 'critic')
+        self.assertTrue(self.critic_user.has_perm('core.can_write_featured_review'))
+
+    def test_regular_user_permission(self):
+        self.assertTrue(self.regular_user.groups.filter(name='Regular').exists())
+        self.assertEqual(self.regular_user.profile.user_type, 'regular')
+        self.assertFalse(self.regular_user.has_perm('core.can_write_featured_review'))
