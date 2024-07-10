@@ -98,10 +98,6 @@ def profile_view(request,pk):
 def my_account_view(request):
     return render(request, "my_account.html")
 
-
-def is_critic(user):
-    return user.profile.user_type == 'critic'
-
 def search_user_view(request):
     query = request.GET.get('q')
     if query:
@@ -242,8 +238,6 @@ def delete_review(request, pk):
 
     return redirect('profile', pk=request.user.profile.pk)
 
-
-
 def get_location(request):
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
@@ -255,7 +249,7 @@ def get_location(request):
         return redirect('feed')
     return render(request, 'get_location.html')
 
-
 def view_on_map(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
     return render(request, 'map.html', {'restaurant': restaurant, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
+

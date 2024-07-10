@@ -7,8 +7,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Erasing database...")
-        User.objects.all().delete()
         Review.objects.all().delete()
-        Restaurant.objects.all().delete()
         Profile.objects.all().delete()
+        User.objects.all().delete()
+        Restaurant.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('Database deleted successfully!'))

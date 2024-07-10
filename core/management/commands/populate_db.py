@@ -1,9 +1,10 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from core.models import Profile, Restaurant, Review
 from decimal import Decimal
 from django.utils import timezone
 import random
+from django.contrib.contenttypes.models import ContentType
 
 class Command(BaseCommand):
     help = 'Populates the database with sample data'
@@ -19,6 +20,15 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Superuser "{}" created successfully'.format(admin_username)))
         else:
             self.stdout.write(self.style.WARNING('Superuser "{}" already exists'.format(admin_username)))
+
+        critic_group, created = Group.objects.get_or_create(name="Critics")
+        content_type = ContentType.objects.get_for_model(Review)
+        can_write_featured_review, created = Permission.objects.get_or_create(
+            codename='can_write_featured_review',
+            name='Can write featured review',
+            content_type=content_type,
+        )
+        critic_group.permissions.add(can_write_featured_review)
 
         users_data = [
             {
@@ -166,7 +176,6 @@ class Command(BaseCommand):
             {'body': 'Overpriced for the quality offered.', 'rating': 2, 'photo': 'review_photos/photo9.jpg', 'is_featured': False},
         ]
 
-        # Populate users and profiles
         for user_data in users_data:
             username = user_data['username']
             email = user_data['email']
@@ -180,13 +189,16 @@ class Command(BaseCommand):
             if created:
                 user.set_password(password)
                 user.save()
-
-            # Use username as profile name
-            profile, created = Profile.objects.get_or_create(user=user, defaults={'user_type': user_type, 'latitude': latitude, 'longitude': longitude, 'name': username})
+            
+            profile, created = Profile.objects.get_or_create(user=user, defaults={'user_type': user_type, 'latitude': latitude, 'longitude': longitude, 'city': city})
             if created:
                 profile.save()
+            
 
-        # Populate restaurants
+            if user_type == 'critic':
+                user.groups.add(critic_group)
+                user.user_permissions.add(can_write_featured_review)
+
         for restaurant_data in restaurants_data:
             place_id = restaurant_data['place_id']
             name = restaurant_data['name']
@@ -198,20 +210,23 @@ class Command(BaseCommand):
             if created:
                 restaurant.save()
 
-        # Create reviews
         for user_data in users_data:
             user = User.objects.get(username=user_data['username'])
-            random_restaurant = random.choice(restaurants_data)
-            restaurant = Restaurant.objects.get(place_id=random_restaurant['place_id'])
-            random_review = random.choice(reviews_data)
+            for i in range(2):  # 2 reviews per user
+                random_restaurant = random.choice(restaurants_data)
+                restaurant = Restaurant.objects.get(place_id=random_restaurant['place_id'])
+                random_review = random.choice(reviews_data)
 
-            review_body = random_review['body']
-            review_rating = random_review['rating']
-            review_photo = random_review['photo'] if 'photo' in random_review else None
-            review_is_featured = random_review['is_featured']
+                review_body = random_review['body']
+                review_rating = random_review['rating']
+                review_photo = random_review['photo'] if 'photo' in random_review else None
+                review_is_featured = random_review['is_featured']
+                
+                if user.has_perm('core.can_write_featured_review'):
+                    review_is_featured = True
 
-            review, created = Review.objects.get_or_create(user=user, restaurant=restaurant, defaults={'body': review_body, 'rating': review_rating, 'photo': review_photo, 'is_featured': review_is_featured, 'created_at': timezone.now()})
-            if created:
-                review.save()
+                review, created = Review.objects.get_or_create(user=user, restaurant=restaurant, defaults={'body': review_body, 'rating': review_rating, 'photo': review_photo, 'is_featured': review_is_featured, 'created_at': timezone.now()})
+                if created:
+                    review.save()
 
-        self.stdout.write(self.style.SUCCESS('Database populated successfully with reviews!'))
+        self.stdout.write(self.style.SUCCESS('Database populated successfully with users, profiles, restaurants, and reviews!'))
