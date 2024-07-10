@@ -36,7 +36,6 @@ class Command(BaseCommand):
                 'password': 'diegopass',
                 'email': 'diego@example.com',
                 'user_type': 'regular',
-                'city': 'Madrid',
                 'latitude': Decimal('40.4168'),
                 'longitude': Decimal('-3.7038')
             },
@@ -45,7 +44,6 @@ class Command(BaseCommand):
                 'password': 'elenapass',
                 'email': 'elena@example.com',
                 'user_type': 'critic',
-                'city': 'Madrid',
                 'latitude': Decimal('40.4172'),
                 'longitude': Decimal('-3.7042')
             },
@@ -54,7 +52,6 @@ class Command(BaseCommand):
                 'password': 'pierrepass',
                 'email': 'pierre@example.com',
                 'user_type': 'regular',
-                'city': 'Paris',
                 'latitude': Decimal('48.8566'),
                 'longitude': Decimal('2.3522')
             },
@@ -63,7 +60,6 @@ class Command(BaseCommand):
                 'password': 'sophiepass',
                 'email': 'sophie@example.com',
                 'user_type': 'critic',
-                'city': 'Paris',
                 'latitude': Decimal('48.8584'),
                 'longitude': Decimal('2.2945')
             },
@@ -72,7 +68,6 @@ class Command(BaseCommand):
                 'password': 'giuseppepass',
                 'email': 'giuseppe@example.com',
                 'user_type': 'regular',
-                'city': 'Modena',
                 'latitude': Decimal('44.6475'),
                 'longitude': Decimal('10.9254')
             },
@@ -81,7 +76,6 @@ class Command(BaseCommand):
                 'password': 'annapass',
                 'email': 'anna@example.com',
                 'user_type': 'critic',
-                'city': 'Modena',
                 'latitude': Decimal('44.6488'),
                 'longitude': Decimal('10.9215')
             },
@@ -90,7 +84,6 @@ class Command(BaseCommand):
                 'password': 'maximilianpass',
                 'email': 'maximilian@example.com',
                 'user_type': 'regular',
-                'city': 'Berlin',
                 'latitude': Decimal('52.5200'),
                 'longitude': Decimal('13.4050')
             },
@@ -99,7 +92,6 @@ class Command(BaseCommand):
                 'password': 'sophiapass',
                 'email': 'sophia@example.com',
                 'user_type': 'critic',
-                'city': 'Berlin',
                 'latitude': Decimal('52.5233'),
                 'longitude': Decimal('13.4127')
             },
@@ -181,7 +173,6 @@ class Command(BaseCommand):
             email = user_data['email']
             password = user_data['password']
             user_type = user_data['user_type']
-            city = user_data['city']
             latitude = user_data['latitude']
             longitude = user_data['longitude']
 
@@ -190,7 +181,7 @@ class Command(BaseCommand):
                 user.set_password(password)
                 user.save()
             
-            profile, created = Profile.objects.get_or_create(user=user, defaults={'user_type': user_type, 'latitude': latitude, 'longitude': longitude, 'city': city})
+            profile, created = Profile.objects.get_or_create(user=user, defaults={'user_type': user_type, 'latitude': latitude, 'longitude': longitude})
             if created:
                 profile.save()
             
