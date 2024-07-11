@@ -8,11 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Erasing database...")
-        for review in Review.objects.all():
-            if review.photo:
-                if os.path.exists(review.photo.path):
-                    os.remove(review.photo.path)
-            review.delete()
+        Review.objects.all().delete()
         Profile.objects.all().delete()
         User.objects.all().delete()
         Restaurant.objects.all().delete()

@@ -234,7 +234,7 @@ def delete_review(request, pk):
     if request.method == 'POST':
         review.delete()
         messages.success(request, 'Review deleted successfully.')
-        return redirect('profile', pk=request.user.profile.pk)
+        return redirect('my_account')
 
     return redirect('profile', pk=request.user.profile.pk)
 
