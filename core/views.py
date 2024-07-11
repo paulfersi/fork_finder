@@ -81,7 +81,7 @@ class ProUserCreateView(CreateView):
     template_name = "registration/pro_user_create.html"
     success_url = reverse_lazy("pro_login")
 
-
+@login_required
 def profile_view(request,pk):
     profile = Profile.objects.get(pk=pk)
     if request.method == "POST":
@@ -95,6 +95,7 @@ def profile_view(request,pk):
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
 
+@login_required
 def my_account_view(request):
     return render(request, "my_account.html")
 
@@ -238,6 +239,7 @@ def delete_review(request, pk):
 
     return redirect('profile', pk=request.user.profile.pk)
 
+@login_required
 def get_location(request):
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
@@ -249,6 +251,7 @@ def get_location(request):
         return redirect('feed')
     return render(request, 'get_location.html')
 
+@login_required
 def view_on_map(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
     return render(request, 'map.html', {'restaurant': restaurant, 'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN})
